@@ -5,7 +5,7 @@ This sample showcases configuring agent pools with tasks, optimizing the build a
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.1"
+  version = "~> 0.2"
 
   naming = local.naming
 
