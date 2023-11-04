@@ -1,11 +1,13 @@
 module "naming" {
-  source = "github.com/cloudnationhq/az-cn-module-tf-naming"
+  source  = "cloudnationhq/naming/azure"
+  version = "~> 0.1"
 
   suffix = ["demo", "dev"]
 }
 
 module "rg" {
-  source = "github.com/cloudnationhq/az-cn-module-tf-rg"
+  source  = "cloudnationhq/rg/azure"
+  version = "~> 0.1"
 
   groups = {
     demo = {
@@ -16,7 +18,8 @@ module "rg" {
 }
 
 module "network" {
-  source = "github.com/cloudnationhq/az-cn-module-tf-vnet"
+  source  = "cloudnationhq/vnet/azure"
+  version = "~> 0.1"
 
   naming = local.naming
 
@@ -54,7 +57,7 @@ module "acr" {
 }
 
 module "private_dns" {
-  source  = "cloudnationhq/acr/modules/private-dns/azure"
+  source  = "cloudnationhq/sa/azure//modules/private-dns"
   version = "~> 0.1"
 
   providers = {
