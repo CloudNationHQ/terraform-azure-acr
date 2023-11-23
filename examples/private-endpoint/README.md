@@ -5,7 +5,7 @@ This example details a container registry setup with a private endpoint, enhanci
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.2"
+  version = "~> 0.3"
 
   registry = {
     name          = module.naming.container_registry.name_unique
