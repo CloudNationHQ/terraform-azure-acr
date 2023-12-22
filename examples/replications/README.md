@@ -5,7 +5,7 @@ This sample demonstrates configuring replications, enabling geo-distribution of 
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.3"
+  version = "~> 0.4"
 
   registry = {
     name          = module.naming.container_registry.name_unique
