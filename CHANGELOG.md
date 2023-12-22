@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v0.3.0...v0.4.0) (2023-12-22)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#10](https://github.com/CloudNationHQ/terraform-azure-acr/issues/10)) ([b2a4e84](https://github.com/CloudNationHQ/terraform-azure-acr/commit/b2a4e840526a9618ce3d53a042667960dc6a4a48))
+* **deps:** bump golang.org/x/crypto from 0.14.0 to 0.17.0 in /tests ([#12](https://github.com/CloudNationHQ/terraform-azure-acr/issues/12)) ([eccc9b5](https://github.com/CloudNationHQ/terraform-azure-acr/commit/eccc9b513db916e1ce8794aea899a8fd05c2acb6))
+
 ## [0.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v0.2.0...v0.3.0) (2023-11-23)
 
 
