@@ -20,37 +20,25 @@ resource "azurerm_role_assignment" "rol" {
 
 # container registry
 resource "azurerm_container_registry" "acr" {
-  name                = var.registry.name
-  resource_group_name = var.registry.resourcegroup
-  location            = var.registry.location
-
-  sku                        = try(var.registry.sku, "Standard")
-  admin_enabled              = try(var.registry.enable.admin, false)
-  quarantine_policy_enabled  = try(var.registry.enable.quarantine_policy, false)
-  network_rule_bypass_option = try(var.registry.network_rule_bypass, "AzureServices")
+  name                          = var.registry.name
+  resource_group_name           = var.registry.resourcegroup
+  location                      = var.registry.location
+  sku                           = try(var.registry.sku, "Standard")
+  admin_enabled                 = try(var.registry.enable.admin, false)
+  quarantine_policy_enabled     = try(var.registry.enable.quarantine_policy, false)
+  network_rule_bypass_option    = try(var.registry.network_rule_bypass, "AzureServices")
+  public_network_access_enabled = try(var.registry.public_network_access_enabled, true)
 
   anonymous_pull_enabled = (
-    var.registry.sku == "Standard" ||
-    var.registry.sku == "Premium" ?
-    try(var.registry.enable.anonymous_pull, false)
-    : false
+    var.registry.sku == "Standard" || var.registry.sku == "Premium" ? try(var.registry.enable.anonymous_pull, false) : false
   )
 
   data_endpoint_enabled = (
-    var.registry == "Premium" ?
-    try(var.registry.enable.data_endpoint, false)
-    : false
+    var.registry == "Premium" ? try(var.registry.enable.data_endpoint, false) : false
   )
 
   export_policy_enabled = (
-    var.registry.sku == "Premium" &&
-    try(var.registry.enable.public_network_access, true) == false ?
-    try(var.registry.enable.export_policy, true)
-    : true
-  )
-
-  public_network_access_enabled = (
-    try(var.registry.enable.public_network_access, false)
+    var.registry.sku == "Premium" && try(var.registry.enable.public_network_access, true) == false ? try(var.registry.enable.export_policy, true) : true
   )
 
   dynamic "trust_policy" {
@@ -219,27 +207,5 @@ resource "azurerm_container_registry_task" "tasks" {
       token_type = "PAT"
       token      = each.value.access_token
     }
-  }
-}
-
-# private endpoint
-resource "azurerm_private_endpoint" "endpoint" {
-  for_each = contains(keys(var.registry), "private_endpoint") ? { "default" = var.registry.private_endpoint } : {}
-
-  name                = var.registry.private_endpoint.name
-  location            = var.registry.location
-  resource_group_name = var.registry.resourcegroup
-  subnet_id           = var.registry.private_endpoint.subnet
-
-  private_service_connection {
-    name                           = "endpoint"
-    is_manual_connection           = try(each.value.is_manual_connection, false)
-    private_connection_resource_id = azurerm_container_registry.acr.id
-    subresource_names              = each.value.subresources
-  }
-
-  private_dns_zone_group {
-    name                 = "default"
-    private_dns_zone_ids = var.registry.private_endpoint.dns_zones
   }
 }

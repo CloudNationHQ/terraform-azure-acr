@@ -19,7 +19,7 @@ module "rg" {
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 0.1"
+  version = "~> 2.0"
 
   naming = local.naming
 
@@ -31,13 +31,14 @@ module "network" {
 
     subnets = {
       sn1 = {
+        nsg  = {}
         cidr = ["10.19.1.0/24"]
       }
     }
   }
 }
 
-module "acr" {
+module "registry" {
   source  = "cloudnationhq/acr/azure"
   version = "~> 0.1"
 
@@ -47,26 +48,35 @@ module "acr" {
     resourcegroup = module.rg.groups.demo.name
     sku           = "Premium"
 
-    private_endpoint = {
-      name         = module.naming.private_endpoint.name
-      dns_zones    = [module.private_dns.zone.id]
-      subnet       = module.network.subnets.sn1.id
-      subresources = ["registry"]
-    }
+    public_network_access_enabled = false
   }
 }
 
 module "private_dns" {
-  source  = "cloudnationhq/sa/azure//modules/private-dns"
+  source  = "cloudnationhq/pdns/azure"
   version = "~> 0.1"
 
-  providers = {
-    azurerm = azurerm.connectivity
-  }
+  resourcegroup = module.rg.groups.demo.name
 
-  zone = {
-    name          = "privatelink.azurecr.io"
-    resourcegroup = "rg-dns-shared-001"
-    vnet          = module.network.vnet.id
+  zones = {
+    registry = {
+      name = "privatelink.azurecr.io"
+      virtual_network_links = {
+        link1 = {
+          virtual_network_id   = module.network.vnet.id
+          registration_enabled = true
+        }
+      }
+    }
   }
+}
+
+module "privatelink" {
+  source  = "cloudnationhq/pe/azure"
+  version = "~> 0.1"
+
+  resourcegroup = module.rg.groups.demo.name
+  location      = module.rg.groups.demo.location
+
+  endpoints = local.endpoints
 }
