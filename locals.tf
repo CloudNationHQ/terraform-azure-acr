@@ -22,7 +22,7 @@ locals {
       secret_name  = "${var.naming.key_vault_secret}-${maps_key}"
       key_vault_id = try(var.registry.vault, null)
       description  = try(m.description, null)
-      tags         = try(m.tags, null)
+      tags         = try(m.tags, var.tags, null)
     }
   ])
 }
@@ -34,7 +34,7 @@ locals {
       instance_count = try(pool.instances, 1)
       tier           = try(pool.tier, "S2")
       tasks          = try(pool.tasks, {})
-      tags           = try(pool.tags, null)
+      tags           = try(pool.tags, var.tags, null)
     }
   } : {}
 
@@ -53,7 +53,7 @@ locals {
         repository_url          = task.repository_url
         source_type             = try(task.source_type, "Github")
         access_token            = task.access_token
-        tags                    = try(task.tags, null)
+        tags                    = try(task.tags, var.tags, null)
       }
     ]
   ])
