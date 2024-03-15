@@ -5,9 +5,9 @@ resource "azurerm_user_assigned_identity" "mi" {
   for_each = try(var.registry.encryption.enable, false) == true ? { "mi" : true } : {}
 
   name                = var.naming.user_assigned_identity
-  resource_group_name = var.registry.resourcegroup
-  location            = var.registry.location
-  tags                = try(var.registry.tags, null)
+  resource_group_name = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
+  location            = coalesce(lookup(var.registry, "location", null), var.location)
+  tags                = try(var.registry.tags, var.tags, null)
 }
 
 # role assignment
@@ -22,30 +22,21 @@ resource "azurerm_role_assignment" "rol" {
 # container registry
 resource "azurerm_container_registry" "acr" {
   name                          = var.registry.name
-  resource_group_name           = var.registry.resourcegroup
-  location                      = var.registry.location
+  resource_group_name           = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
+  location                      = coalesce(lookup(var.registry, "location", null), var.location)
   sku                           = try(var.registry.sku, "Standard")
   admin_enabled                 = try(var.registry.admin_enabled, false)
   quarantine_policy_enabled     = try(var.registry.quarantine_policy_enabled, false)
   network_rule_bypass_option    = try(var.registry.network_rule_bypass_option, "AzureServices")
   public_network_access_enabled = try(var.registry.public_network_access_enabled, true)
   zone_redundancy_enabled       = try(var.registry.zone_redundancy_enabled, false)
-  tags                          = try(var.registry.tags, null)
-
-  anonymous_pull_enabled = (
-    var.registry.sku == "Standard" || var.registry.sku == "Premium" ? try(var.registry.anonymous_pull_enabled, false) : false //investigate validation in object
-  )
-
-  data_endpoint_enabled = (
-    var.registry == "Premium" ? try(var.registry.data_endpoint_enabled, false) : false
-  )
-
-  export_policy_enabled = (
-    var.registry.sku == "Premium" && try(var.registry.public_network_access_enabled, true) == false ? try(var.registry.export_policy_enabled, true) : true
-  )
+  tags                          = try(var.registry.tags, var.tags, null)
+  anonymous_pull_enabled        = try(var.registry.anonymous_pull_enabled, false)
+  export_policy_enabled         = try(var.registry.export_policy_enabled, true)
+  data_endpoint_enabled         = try(var.registry.data_endpoint_enabled, false)
 
   dynamic "trust_policy" {
-    for_each = var.registry.sku == "Premium" && try(var.registry.trust_policy.enabled, false) == true ? [1] : []
+    for_each = try(var.registry.trust_policy.enabled, false) == true ? [1] : []
 
     content {
       enabled = var.registry.trust_policy.enabled
@@ -53,7 +44,7 @@ resource "azurerm_container_registry" "acr" {
   }
 
   dynamic "retention_policy" {
-    for_each = var.registry.sku == "Premium" && try(var.registry.retention_policy.enabled, false) == true ? [1] : []
+    for_each = try(var.registry.retention_policy.enabled, false) == true ? [1] : []
 
     content {
       enabled = var.registry.retention_policy.enabled
@@ -105,7 +96,7 @@ resource "azurerm_container_registry_scope_map" "scope" {
 
   name                    = each.value.name
   container_registry_name = azurerm_container_registry.acr.name
-  resource_group_name     = var.registry.resourcegroup
+  resource_group_name     = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
   actions                 = each.value.actions
   description             = each.value.description
 }
@@ -118,7 +109,7 @@ resource "azurerm_container_registry_token" "token" {
 
   name                    = each.value.token_name
   container_registry_name = azurerm_container_registry.acr.name
-  resource_group_name     = var.registry.resourcegroup
+  resource_group_name     = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
   scope_map_id            = azurerm_container_registry_scope_map.scope[each.key].id
 }
 
@@ -169,8 +160,8 @@ resource "azurerm_container_registry_agent_pool" "pools" {
   name                      = each.value.name
   container_registry_name   = azurerm_container_registry.acr.name
   instance_count            = each.value.instance_count
-  location                  = var.registry.location
-  resource_group_name       = var.registry.resourcegroup
+  resource_group_name       = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
+  location                  = coalesce(lookup(var.registry, "location", null), var.location)
   tier                      = each.value.tier
   virtual_network_subnet_id = var.registry.agentpools[each.key].subnet
   tags                      = each.value.tags
