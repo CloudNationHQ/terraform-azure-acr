@@ -7,6 +7,7 @@ resource "azurerm_user_assigned_identity" "mi" {
   name                = var.naming.user_assigned_identity
   resource_group_name = var.registry.resourcegroup
   location            = var.registry.location
+  tags                = try(var.registry.tags, null)
 }
 
 # role assignment
@@ -24,37 +25,39 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name           = var.registry.resourcegroup
   location                      = var.registry.location
   sku                           = try(var.registry.sku, "Standard")
-  admin_enabled                 = try(var.registry.enable.admin, false)
-  quarantine_policy_enabled     = try(var.registry.enable.quarantine_policy, false)
-  network_rule_bypass_option    = try(var.registry.network_rule_bypass, "AzureServices")
+  admin_enabled                 = try(var.registry.admin_enabled, false)
+  quarantine_policy_enabled     = try(var.registry.quarantine_policy_enabled, false)
+  network_rule_bypass_option    = try(var.registry.network_rule_bypass_option, "AzureServices")
   public_network_access_enabled = try(var.registry.public_network_access_enabled, true)
+  zone_redundancy_enabled       = try(var.registry.zone_redundancy_enabled, false)
+  tags                          = try(var.registry.tags, null)
 
   anonymous_pull_enabled = (
-    var.registry.sku == "Standard" || var.registry.sku == "Premium" ? try(var.registry.enable.anonymous_pull, false) : false
+    var.registry.sku == "Standard" || var.registry.sku == "Premium" ? try(var.registry.anonymous_pull_enabled, false) : false //investigate validation in object
   )
 
   data_endpoint_enabled = (
-    var.registry == "Premium" ? try(var.registry.enable.data_endpoint, false) : false
+    var.registry == "Premium" ? try(var.registry.data_endpoint_enabled, false) : false
   )
 
   export_policy_enabled = (
-    var.registry.sku == "Premium" && try(var.registry.enable.public_network_access, true) == false ? try(var.registry.enable.export_policy, true) : true
+    var.registry.sku == "Premium" && try(var.registry.public_network_access_enabled, true) == false ? try(var.registry.export_policy_enabled, true) : true
   )
 
   dynamic "trust_policy" {
-    for_each = var.registry.sku == "Premium" && try(var.registry.enable.trust_policy, false) == true ? [1] : []
+    for_each = var.registry.sku == "Premium" && try(var.registry.trust_policy.enabled, false) == true ? [1] : []
 
     content {
-      enabled = var.registry.enable.trust_policy
+      enabled = var.registry.trust_policy.enabled
     }
   }
 
   dynamic "retention_policy" {
-    for_each = var.registry.sku == "Premium" && try(var.registry.enable.retention_policy, false) == true ? [1] : []
+    for_each = var.registry.sku == "Premium" && try(var.registry.retention_policy.enabled, false) == true ? [1] : []
 
     content {
-      enabled = var.registry.enable.retention_policy
-      days    = try(var.registry.retention_in_days, 90)
+      enabled = var.registry.retention_policy.enabled
+      days    = try(var.registry.retention_policy.days, 90)
     }
   }
 
@@ -104,6 +107,7 @@ resource "azurerm_container_registry_scope_map" "scope" {
   container_registry_name = azurerm_container_registry.acr.name
   resource_group_name     = var.registry.resourcegroup
   actions                 = each.value.actions
+  description             = each.value.description
 }
 
 # tokens
@@ -144,6 +148,7 @@ resource "azurerm_key_vault_secret" "secret1" {
   name         = "${each.value.secret_name}-1"
   value        = azurerm_container_registry_token_password.password[each.key].password1[0].value
   key_vault_id = each.value.key_vault_id
+  tags         = each.value.tags
 }
 
 resource "azurerm_key_vault_secret" "secret2" {
@@ -154,6 +159,7 @@ resource "azurerm_key_vault_secret" "secret2" {
   name         = "${each.value.secret_name}-2"
   value        = azurerm_container_registry_token_password.password[each.key].password2[0].value
   key_vault_id = each.value.key_vault_id
+  tags         = each.value.tags
 }
 
 # agent pools
@@ -167,6 +173,7 @@ resource "azurerm_container_registry_agent_pool" "pools" {
   resource_group_name       = var.registry.resourcegroup
   tier                      = each.value.tier
   virtual_network_subnet_id = var.registry.agentpools[each.key].subnet
+  tags                      = each.value.tags
 }
 
 # registry tasks
@@ -178,6 +185,7 @@ resource "azurerm_container_registry_task" "tasks" {
   agent_pool_name       = each.value.pool_name
   container_registry_id = azurerm_container_registry.acr.id
   name                  = each.value.task_name
+  tags                  = each.value.tags
 
   base_image_trigger {
     name                        = "defaultBaseimageTriggerName"

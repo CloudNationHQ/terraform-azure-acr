@@ -18,7 +18,8 @@ module "rg" {
 }
 
 module "kv" {
-  source = "github.com/cloudnationhq/az-cn-module-tf-kv"
+  source  = "cloudnationhq/kv/azure"
+  version = "~> 0.1"
 
   naming = local.naming
 
