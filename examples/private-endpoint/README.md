@@ -1,43 +1,31 @@
 This example details a container registry setup with a private endpoint, enhancing security by restricting data access to a private network.
 
-## Usage
+## Usage: private endpoint
 
 ```hcl
-module "acr" {
-  source  = "cloudnationhq/acr/azure"
-  version = "~> 0.4"
+module "privatelink" {
+  source  = "cloudnationhq/pe/azure"
+  version = "~> 0.8"
 
-  registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    sku           = "Premium"
+  resourcegroup = module.rg.groups.demo.name
+  location      = module.rg.groups.demo.location
 
-    private_endpoint = {
-      name         = module.naming.private_endpoint.name
-      dns_zones    = [module.private_dns.zone.id]
-      subnet       = module.network.subnets.sn1.id
-      subresources = ["registry"]
-    }
-  }
+  endpoints = local.endpoints
 }
 ```
 
-To enable private link, the below private dns submodule can be employed:
+The module uses the below locals for configuration:
 
 ```hcl
-module "private_dns" {
-  source  = "cloudnationhq/sa/azure//modules/private-dns"
-  version = "~> 0.1"
-
-  providers = {
-    azurerm = azurerm.connectivity
-  }
-
-  zone = {
-    name          = "privatelink.azurecr.io"
-    resourcegroup = "rg-dns-shared-001"
-    vnet          = module.network.vnet.id
+locals {
+  endpoints = {
+    registry = {
+      name                           = module.naming.private_endpoint.name
+      subnet_id                      = module.network.subnets.sn1.id
+      private_connection_resource_id = module.registry.acr.id
+      private_dns_zone_ids           = [module.private_dns.zones.registry.id]
+      subresource_names              = ["registry"]
+    }
   }
 }
 ```
