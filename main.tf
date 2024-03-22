@@ -4,7 +4,7 @@ data "azurerm_subscription" "current" {}
 resource "azurerm_user_assigned_identity" "mi" {
   for_each = try(var.registry.encryption.enable, false) == true ? { "mi" : true } : {}
 
-  name                = var.naming.user_assigned_identity
+  name                = try(var.registry.encryption.identity_name, "uai-${var.registry.name}")
   resource_group_name = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
   location            = coalesce(lookup(var.registry, "location", null), var.location)
   tags                = try(var.registry.tags, var.tags, null)
@@ -82,6 +82,20 @@ resource "azurerm_container_registry" "acr" {
     }
   }
 
+  dynamic "network_rule_set" {
+    for_each = try(var.registry.network_rule_set, null) != null ? [1] : []
+    content {
+      default_action = try(var.registry.network_rule_set.default_action, "Allow")
+
+      dynamic "ip_rule" {
+        for_each = { for key, ipr in try(var.registry.network_rule_set.ip_rules, {}) : key => ipr }
+        content {
+          action   = "Allow" # Only Allow is supported at this time
+          ip_range = ip_rule.value.ip_range
+        }
+      }
+    }
+  }
   depends_on = [
     azurerm_role_assignment.rol
   ]
