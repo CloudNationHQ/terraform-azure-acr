@@ -5,7 +5,7 @@ This sample illustrates setting up encryption, enhancing security by protecting 
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.5"
+  version = "~> 0.6"
 
   registry = {
     name          = module.naming.container_registry.name_unique
