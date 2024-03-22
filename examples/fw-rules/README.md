@@ -1,22 +1,8 @@
-module "naming" {
-  source  = "cloudnationhq/naming/azure"
-  version = "~> 0.1"
+This example shows how to use network rules to enhance security with secure access control.
 
-  suffix = ["demo", "dev"]
-}
+## Usage
 
-module "rg" {
-  source  = "cloudnationhq/rg/azure"
-  version = "~> 0.1"
-
-  groups = {
-    demo = {
-      name   = module.naming.resource_group.name
-      region = "westeurope"
-    }
-  }
-}
-
+```hcl
 module "registry" {
   source  = "cloudnationhq/acr/azure"
   version = "~> 0.1"
@@ -32,7 +18,6 @@ module "registry" {
       ip_rules = {
         rule_1 = {
           ip_range = "1.0.0.0/32"
-          # If single IP, you still need to put it as a range, otherwise TF will detect a change.
         }
         rule_2 = {
           ip_range = "1.0.0.1/32"
@@ -41,3 +26,4 @@ module "registry" {
     }
   }
 }
+```

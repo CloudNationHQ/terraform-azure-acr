@@ -96,7 +96,6 @@ resource "azurerm_container_registry" "acr" {
       }
     }
   }
-
   depends_on = [
     azurerm_role_assignment.rol
   ]
