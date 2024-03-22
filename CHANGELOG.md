@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v0.5.0...v0.6.0) (2024-03-22)
+
+
+### Features
+
+* add support for network rules ([#23](https://github.com/CloudNationHQ/terraform-azure-acr/issues/23)) ([546798c](https://github.com/CloudNationHQ/terraform-azure-acr/commit/546798c0e21538eda4046d02b26f59bb4aa36291))
+
 ## [0.5.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v0.4.0...v0.5.0) (2024-03-15)
 
 
