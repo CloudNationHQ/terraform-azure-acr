@@ -44,8 +44,9 @@ module "kv" {
 }
 
 module "registry" {
-  source  = "cloudnationhq/acr/azure"
-  version = "~> 0.1"
+  source = "../.."
+  # source  = "cloudnationhq/acr/azure"
+  # version = "~> 0.1"
 
   naming = local.naming
 
@@ -75,6 +76,18 @@ module "registry" {
     replications = {
       sea = { location = "southeastasia" }
       eus = { location = "eastus" }
+    }
+
+    network_rule_set = {
+      default_action = "Deny"
+      ip_rules = {
+        rule_1 = {
+          ip_range = "1.0.0.0/32"
+        }
+        rule_2 = {
+          ip_range = "1.0.0.1/32"
+        }
+      }
     }
   }
 }
