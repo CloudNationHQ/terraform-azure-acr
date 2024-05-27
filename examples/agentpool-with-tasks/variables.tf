@@ -1,3 +1,0 @@
-variable "pat" {
-  type = string
-}
