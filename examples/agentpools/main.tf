@@ -2,7 +2,7 @@ module "naming" {
   source  = "cloudnationhq/naming/azure"
   version = "~> 0.1"
 
-  suffix = ["demo", "dev"]
+  suffix = ["demo", "prd"]
 }
 
 module "rg" {
@@ -12,14 +12,14 @@ module "rg" {
   groups = {
     demo = {
       name   = module.naming.resource_group.name
-      region = "westeurope"
+      region = "northeurope"
     }
   }
 }
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 0.1"
+  version = "~> 2.0"
 
   naming = local.naming
 
@@ -27,14 +27,18 @@ module "network" {
     name          = module.naming.virtual_network.name
     location      = module.rg.groups.demo.location
     resourcegroup = module.rg.groups.demo.name
-    cidr          = ["10.25.0.0/16"]
+    cidr          = ["10.18.0.0/16"]
+
     subnets = {
-      demo = { cidr = ["10.25.1.0/24"] }
+      sn1 = {
+        cidr = ["10.18.1.0/24"]
+        nsg  = {}
+      }
     }
   }
 }
 
-module "acr" {
+module "registry" {
   source  = "cloudnationhq/acr/azure"
   version = "~> 0.1"
 
@@ -46,20 +50,12 @@ module "acr" {
     resourcegroup = module.rg.groups.demo.name
     sku           = "Premium"
 
+    public_network_access_enabled = false
+
     agentpools = {
-      demo = {
-        instances = 2
-        subnet    = module.network.subnets.demo.id
-        tasks = {
-          image = {
-            access_token    = var.pat
-            repository_url  = "https://github.com/cloudnationhq/az-cn-module-tf-acr.git"
-            context_path    = "https://github.com/cloudnationhq/az-cn-module-tf-acr#main"
-            dockerfile_path = ".azdo/Dockerfile"
-            image_names     = ["azdoagent:latest"]
-            source_events   = ["commit"]
-          }
-        }
+      pool1 = {
+        instances                 = 2
+        virtual_network_subnet_id = module.network.subnets.sn1.id
       }
     }
   }

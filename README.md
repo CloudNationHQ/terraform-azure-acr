@@ -19,7 +19,6 @@ A last key goal is to separate logic from configuration in the module, thereby e
 - data protection is enhanced by encryption for data at rest
 - utilization of terratest for robust validation.
 - supports enhanced scalability and isolation through dedicated agent pools
-- flexibility to deploy multiple tasks using agent pools
 - integrates seamlessly with private endpoint capabilities for direct and secure connectivity.
 
 ## Requirements
