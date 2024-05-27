@@ -28,33 +28,13 @@ locals {
 }
 
 locals {
-  pools = contains(keys(var.registry), "agentpools") ? {
-    for pool_key, pool in var.registry.agentpools : pool_key => {
-      name           = pool_key
-      instance_count = try(pool.instances, 1)
-      tier           = try(pool.tier, "S2")
-      tasks          = try(pool.tasks, {})
-      tags           = try(pool.tags, var.tags, null)
+  pools = { for pool_key, pool in lookup(var.registry, "agentpools", {}) :
+    pool_key => {
+      name                      = pool_key
+      instance_count            = try(pool.instances, 1)
+      tier                      = try(pool.tier, "S2")
+      tags                      = try(pool.tags, var.tags, null)
+      virtual_network_subnet_id = lookup(pool, "virtual_network_subnet_id", null)
     }
-  } : {}
-
-  tasks = flatten([
-    for pool_key, pool in local.pools : [
-      for task_key, task in try(pool.tasks, {}) : {
-        pool_name               = azurerm_container_registry_agent_pool.pools[pool_key].name
-        task_name               = task_key
-        base_image_trigger_type = try(task.base_image_type, "Runtime")
-        context_access_token    = task.access_token
-        context_path            = task.context_path
-        dockerfile_path         = task.dockerfile_path
-        image_names             = task.image_names
-        source_branch           = try(task.source_branch, "main")
-        source_events           = task.source_events
-        repository_url          = task.repository_url
-        source_type             = try(task.source_type, "Github")
-        access_token            = task.access_token
-        tags                    = try(task.tags, var.tags, null)
-      }
-    ]
-  ])
+  }
 }
