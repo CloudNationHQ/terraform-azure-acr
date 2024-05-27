@@ -177,48 +177,6 @@ resource "azurerm_container_registry_agent_pool" "pools" {
   resource_group_name       = coalesce(lookup(var.registry, "resourcegroup", null), var.resourcegroup)
   location                  = coalesce(lookup(var.registry, "location", null), var.location)
   tier                      = each.value.tier
-  virtual_network_subnet_id = var.registry.agentpools[each.key].subnet
+  virtual_network_subnet_id = each.value.virtual_network_subnet_id
   tags                      = each.value.tags
-}
-
-# registry tasks
-resource "azurerm_container_registry_task" "tasks" {
-  for_each = {
-    for task in local.tasks : "${task.pool_name}.${task.task_name}" => task
-  }
-
-  agent_pool_name       = each.value.pool_name
-  container_registry_id = azurerm_container_registry.acr.id
-  name                  = each.value.task_name
-  tags                  = each.value.tags
-
-  base_image_trigger {
-    name                        = "defaultBaseimageTriggerName"
-    type                        = each.value.base_image_trigger_type
-    update_trigger_payload_type = "Default"
-  }
-
-  docker_step {
-    context_access_token = each.value.context_access_token
-    context_path         = each.value.context_path
-    dockerfile_path      = each.value.dockerfile_path
-    image_names          = each.value.image_names
-  }
-
-  platform {
-    architecture = "amd64"
-    os           = "Linux"
-  }
-
-  source_trigger {
-    branch         = each.value.source_branch
-    events         = each.value.source_events
-    name           = "defaultSourceTriggerName"
-    repository_url = each.value.repository_url
-    source_type    = each.value.source_type
-    authentication {
-      token_type = "PAT"
-      token      = each.value.access_token
-    }
-  }
 }
