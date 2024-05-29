@@ -5,7 +5,7 @@ This sample demonstrates setting up scope maps, specifying fine-grained permissi
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.1"
+  version = "~> 1.2"
 
   registry = {
     name          = module.naming.container_registry.name_unique
