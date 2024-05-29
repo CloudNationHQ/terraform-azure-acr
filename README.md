@@ -18,6 +18,7 @@ A last key goal is to separate logic from configuration in the module, thereby e
 - detailed access control is ensured through the use of scope maps
 - data protection is enhanced by encryption for data at rest
 - utilization of terratest for robust validation.
+- enables the configuration of multiple tasks and triggers
 - supports enhanced scalability and isolation through dedicated agent pools
 - integrates seamlessly with private endpoint capabilities for direct and secure connectivity.
 
