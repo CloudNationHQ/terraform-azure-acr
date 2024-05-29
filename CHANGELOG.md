@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.1.0...v1.2.0) (2024-05-29)
+
+
+### Features
+
+* update documentation ([#38](https://github.com/CloudNationHQ/terraform-azure-acr/issues/38)) ([6523d3f](https://github.com/CloudNationHQ/terraform-azure-acr/commit/6523d3f995569e94e5a1fd406a3787d167a1e872))
+
 ## [1.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.0.0...v1.1.0) (2024-05-29)
 
 
