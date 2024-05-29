@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.0.0...v1.1.0) (2024-05-29)
+
+
+### Features
+
+* add tasks submodule with support for all available triggers and extended functionality ([#36](https://github.com/CloudNationHQ/terraform-azure-acr/issues/36)) ([8046673](https://github.com/CloudNationHQ/terraform-azure-acr/commit/8046673bdf3db9324a3abb2f427f255510d57961))
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#35](https://github.com/CloudNationHQ/terraform-azure-acr/issues/35)) ([f12c8f1](https://github.com/CloudNationHQ/terraform-azure-acr/commit/f12c8f1a533e8da4ff8a146568f4c2070d49830c))
+
 ## [1.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v0.6.0...v1.0.0) (2024-05-27)
 
 
