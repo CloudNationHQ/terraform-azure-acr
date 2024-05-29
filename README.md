@@ -65,8 +65,9 @@ A last key goal is to separate logic from configuration in the module, thereby e
 
 | Name | Description |
 | :-- | :-- |
-| `acr` | container registry setup details |
+| `acr` | contains the container registry related configuration |
 | `subscriptionId` | contains the current subscription id |
+| `agentpools` | contains the agent pools |
 
 ## Testing
 

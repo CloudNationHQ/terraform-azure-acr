@@ -43,10 +43,40 @@ module "kv" {
   }
 }
 
+module "network" {
+  source  = "cloudnationhq/vnet/azure"
+  version = "~> 2.0"
+
+  naming = local.naming
+
+  vnet = {
+    name          = module.naming.virtual_network.name
+    location      = module.rg.groups.demo.location
+    resourcegroup = module.rg.groups.demo.name
+    cidr          = ["10.18.0.0/16"]
+
+    subnets = {
+      sn1 = {
+        cidr = ["10.18.1.0/24"]
+        nsg  = {}
+      }
+    }
+  }
+}
+
+module "tasks" {
+  source  = "cloudnationhq/acr/azure//modules/tasks"
+  version = "~> 1.0"
+
+  resourcegroup = module.rg.groups.demo.name
+  location      = module.rg.groups.demo.location
+
+  tasks = local.tasks
+}
+
 module "registry" {
-  source = "../.."
-  # source  = "cloudnationhq/acr/azure"
-  # version = "~> 0.1"
+  source  = "cloudnationhq/acr/azure"
+  version = "~> 1.0"
 
   naming = local.naming
 
@@ -59,7 +89,7 @@ module "registry" {
 
     scope_maps = {
       prod = {
-        token_expiry = "2024-03-22T17:57:36+08:00"
+        token_expiry = "2025-03-22T17:57:36+08:00"
         actions = [
           "repositories/repo1/content/read",
           "repositories/repo1/content/write"
@@ -78,15 +108,10 @@ module "registry" {
       eus = { location = "eastus" }
     }
 
-    network_rule_set = {
-      default_action = "Deny"
-      ip_rules = {
-        rule_1 = {
-          ip_range = "1.0.0.0/32"
-        }
-        rule_2 = {
-          ip_range = "1.0.0.1/32"
-        }
+    agentpools = {
+      pool1 = {
+        instances                 = 2
+        virtual_network_subnet_id = module.network.subnets.sn1.id
       }
     }
   }
