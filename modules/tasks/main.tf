@@ -4,7 +4,7 @@ resource "azurerm_container_registry_task" "tasks" {
 
   name                  = try(each.value.task_name, each.key)
   container_registry_id = each.value.container_registry_id
-  agent_pool_name       = try(each.value.pool_name, null)
+  agent_pool_name       = try(each.value.agent_pool_name, null)
   enabled               = try(each.value.enabled, true)
   is_system_task        = try(each.value.is_system_task, false)
   log_template          = try(each.value.log_template, null)

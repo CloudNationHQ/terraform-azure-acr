@@ -19,7 +19,7 @@ module "rg" {
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   resourcegroup = module.rg.groups.demo.name
   location      = module.rg.groups.demo.location
