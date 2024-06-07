@@ -7,7 +7,7 @@ The below provides a simple usage of encoded steps and timer triggers:
 ```hcl
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 1.2"
+  version = "~> 1.3"
 
   resourcegroup = module.rg.groups.demo.name
   location      = module.rg.groups.demo.location

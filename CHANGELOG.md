@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.2.0...v1.3.0) (2024-06-07)
+
+
+### Features
+
+* add pull request template ([703b00d](https://github.com/CloudNationHQ/terraform-azure-acr/commit/703b00d28c4b62d0deda2cdd4af88adbe0e86bbc))
+
 ## [1.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.1.0...v1.2.0) (2024-05-29)
 
 
