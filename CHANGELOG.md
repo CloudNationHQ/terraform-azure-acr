@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.4.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.3.0...v1.4.0) (2024-07-02)
+
+
+### Features
+
+* add issue template ([#48](https://github.com/CloudNationHQ/terraform-azure-acr/issues/48)) ([dc844a0](https://github.com/CloudNationHQ/terraform-azure-acr/commit/dc844a0e4b4fb115c7daa6fe3133a049fb750b2b))
+* **deps:** bump github.com/Azure/azure-sdk-for-go/sdk/azidentity ([#45](https://github.com/CloudNationHQ/terraform-azure-acr/issues/45)) ([e691991](https://github.com/CloudNationHQ/terraform-azure-acr/commit/e691991f26661c2a488e4ecb2d80e8dd35b7fadf))
+* **deps:** bump github.com/Azure/azure-sdk-for-go/sdk/azidentity ([#46](https://github.com/CloudNationHQ/terraform-azure-acr/issues/46)) ([0d5b9ea](https://github.com/CloudNationHQ/terraform-azure-acr/commit/0d5b9eabca0b665745a39832cdb74afbcdef3b80))
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#49](https://github.com/CloudNationHQ/terraform-azure-acr/issues/49)) ([d5c4c99](https://github.com/CloudNationHQ/terraform-azure-acr/commit/d5c4c999fa2cbb601e7f0ed1c605db6da205226f))
+* **deps:** bump github.com/hashicorp/go-getter in /tests ([#47](https://github.com/CloudNationHQ/terraform-azure-acr/issues/47)) ([bcde716](https://github.com/CloudNationHQ/terraform-azure-acr/commit/bcde716f480840be8aa3704910c7e53c568cac89))
+
 ## [1.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.2.0...v1.3.0) (2024-06-07)
 
 
