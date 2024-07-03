@@ -5,7 +5,7 @@ This example shows how to use network rules to enhance security with secure acce
 ```hcl
 module "registry" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.4"
+  version = "~> 1.5"
 
   registry = {
     name          = module.naming.container_registry.name_unique
