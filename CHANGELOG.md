@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.4.0...v1.5.0) (2024-07-03)
+
+
+### Features
+
+* update random provider version ([#51](https://github.com/CloudNationHQ/terraform-azure-acr/issues/51)) ([8c5edfd](https://github.com/CloudNationHQ/terraform-azure-acr/commit/8c5edfdca04744d40c89c9e18c5d01195ac2ebe5))
+
 ## [1.4.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.3.0...v1.4.0) (2024-07-02)
 
 

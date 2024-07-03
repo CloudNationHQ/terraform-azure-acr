@@ -5,7 +5,7 @@ This example highlights the complete usage.
 ```hcl
 module "registry" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.4"
+  version = "~> 1.5"
 
   naming = local.naming
 
