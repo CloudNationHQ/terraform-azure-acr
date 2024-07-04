@@ -5,7 +5,7 @@ This example illustrates the default setup, creating a secure repository for doc
 ```hcl
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.5"
+  version = "~> 1.6"
 
   registry = {
     name          = module.naming.container_registry.name_unique
