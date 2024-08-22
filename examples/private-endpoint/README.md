@@ -5,7 +5,7 @@ This example details a container registry setup with a private endpoint, enhanci
 ```hcl
 module "privatelink" {
   source  = "cloudnationhq/pe/azure"
-  version = "~> 1.5"
+  version = "~> 1.6"
 
   resourcegroup = module.rg.groups.demo.name
   location      = module.rg.groups.demo.location
