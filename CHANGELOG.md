@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.5.0...v1.6.0) (2024-08-22)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#55](https://github.com/CloudNationHQ/terraform-azure-acr/issues/55)) ([38227f2](https://github.com/CloudNationHQ/terraform-azure-acr/commit/38227f27ff124ca39724fc3424bd16e0eaa699c2))
+* update contribution docs ([#53](https://github.com/CloudNationHQ/terraform-azure-acr/issues/53)) ([f7a2f8a](https://github.com/CloudNationHQ/terraform-azure-acr/commit/f7a2f8a4e07ba9c9803a66315cb8565979053c46))
+
 ## [1.5.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.4.0...v1.5.0) (2024-07-03)
 
 

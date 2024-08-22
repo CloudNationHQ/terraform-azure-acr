@@ -5,7 +5,7 @@ This sample demonstrates the ability to configure multiple agent pools, allowing
 ```hcl
 module "registry" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.5"
+  version = "~> 1.6"
 
   naming = local.naming
 
