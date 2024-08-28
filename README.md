@@ -101,8 +101,6 @@ Using a dedicated module, we've developed a naming convention for resources that
 
 Full examples detailing all usages, along with integrations with dependency modules, are located in the examples directory
 
-To streamline integration with the enterprise scale module, private endpoints can also make use of [existing zones](https://github.com/CloudNationHQ/terraform-azure-pdns/tree/main/examples/existing-zone).
-
 ## Authors
 
 Module is maintained by [these awesome contributors](https://github.com/cloudnationhq/terraform-azure-acr/graphs/contributors).
