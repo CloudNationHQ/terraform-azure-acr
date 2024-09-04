@@ -2,27 +2,27 @@ module "naming" {
   source  = "cloudnationhq/naming/azure"
   version = "~> 0.1"
 
-  suffix = ["demo", "jobs"]
+  suffix = ["demo", "prd"]
 }
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   groups = {
     demo = {
-      name   = module.naming.resource_group.name
-      region = "westeurope"
+      name     = module.naming.resource_group.name
+      location = "westeurope"
     }
   }
 }
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
-  resourcegroup = module.rg.groups.demo.name
-  location      = module.rg.groups.demo.location
+  resource_group = module.rg.groups.demo.name
+  location       = module.rg.groups.demo.location
 
   tasks = {
     say_hello = {
@@ -35,7 +35,7 @@ module "tasks" {
         os           = "Linux"
       }
 
-      container_registry_id = module.registry.acr.id
+      container_registry_id = module.acr.registry.id
 
       encoded_step = {
         task_content = base64encode(<<EOF
@@ -59,14 +59,14 @@ EOF
   }
 }
 
-module "registry" {
+module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    sku           = "Premium"
+    name           = module.naming.container_registry.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    sku            = "Premium"
   }
 }

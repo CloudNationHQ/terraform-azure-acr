@@ -68,15 +68,15 @@ End-to-end testing is not conducted on these modules, as they are individual com
 | `registry` | describes container registry related configuration | object | yes |
 | `naming` | contains the naming convention	| string | yes |
 | `location` | default azure region tho be used | string | no |
-| `resourcegroup` | default resource group to be used | string | no |
+| `resource_group` | default resource group to be used | string | no |
 | `tags` | tags to be added to the resources | map(string) | no |
 
 ## Outputs
 
 | Name | Description |
 | :-- | :-- |
-| `acr` | contains the container registry related configuration |
-| `subscriptionId` | contains the current subscription id |
+| `registry` | contains the container registry related configuration |
+| `subscription_id` | contains the current subscription id |
 | `agentpools` | contains the agent pools |
 
 ## Testing

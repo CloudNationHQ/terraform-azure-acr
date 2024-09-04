@@ -7,25 +7,25 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   groups = {
     demo = {
-      name   = module.naming.resource_group.name
-      region = "westeurope"
+      name     = module.naming.resource_group.name
+      location = "westeurope"
     }
   }
 }
 
-module "registry" {
+module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.1"
+  version = "~> 2.0"
 
   registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    sku           = "Premium"
+    name           = module.naming.container_registry.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    sku            = "Premium"
 
     network_rule_set = {
       default_action = "Deny"

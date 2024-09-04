@@ -7,26 +7,26 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   groups = {
     demo = {
-      name   = module.naming.resource_group.name
-      region = "westeurope"
+      name     = module.naming.resource_group.name
+      location = "westeurope"
     }
   }
 }
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   naming = local.naming
 
   vault = {
-    name          = module.naming.key_vault.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
+    name           = module.naming.key_vault.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
 
     keys = {
       demo = {
@@ -45,15 +45,15 @@ module "kv" {
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   naming = local.naming
 
   vnet = {
-    name          = module.naming.virtual_network.name
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    cidr          = ["10.18.0.0/16"]
+    name           = module.naming.virtual_network.name
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    cidr           = ["10.18.0.0/16"]
 
     subnets = {
       sn1 = {
@@ -66,26 +66,26 @@ module "network" {
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
-  resourcegroup = module.rg.groups.demo.name
-  location      = module.rg.groups.demo.location
+  resource_group = module.rg.groups.demo.name
+  location       = module.rg.groups.demo.location
 
   tasks = local.tasks
 }
 
-module "registry" {
+module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   naming = local.naming
 
   registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    vault         = module.kv.vault.id
-    sku           = "Premium"
+    name           = module.naming.container_registry.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    vault          = module.kv.vault.id
+    sku            = "Premium"
 
     scope_maps = {
       prod = {
@@ -98,14 +98,15 @@ module "registry" {
     }
 
     encryption = {
-      enable                = true
-      kv_key_id             = module.kv.keys.demo.id
+      enabled               = true
+      key_vault_key_id      = module.kv.keys.demo.id
       role_assignment_scope = module.kv.vault.id
     }
 
-    replications = {
-      sea = { location = "southeastasia" }
-      eus = { location = "eastus" }
+    georeplications = {
+      sea = {
+        location = "southeastasia"
+      }
     }
 
     agentpools = {
@@ -113,6 +114,20 @@ module "registry" {
         instances                 = 2
         virtual_network_subnet_id = module.network.subnets.sn1.id
       }
+    }
+
+    network_rule_set = {
+      default_action = "Deny"
+      ip_rules = {
+        rule_1 = {
+          ip_range = "1.0.0.0/32"
+        }
+      }
+    }
+
+    retention_policy = {
+      enabled = true
+      days    = 15
     }
   }
 }

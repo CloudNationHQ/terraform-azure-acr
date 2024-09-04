@@ -7,27 +7,27 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
   groups = {
     demo = {
-      name   = module.naming.resource_group.name
-      region = "westeurope"
+      name     = module.naming.resource_group.name
+      location = "westeurope"
     }
   }
 }
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   naming = local.naming
 
   vnet = {
-    name          = module.naming.virtual_network.name
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    cidr          = ["10.19.0.0/16"]
+    name           = module.naming.virtual_network.name
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    cidr           = ["10.19.0.0/16"]
 
     subnets = {
       sn1 = {
@@ -38,15 +38,15 @@ module "network" {
   }
 }
 
-module "registry" {
+module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 0.1"
+  version = "~> 2.0"
 
   registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    sku           = "Premium"
+    name           = module.naming.container_registry.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    sku            = "Premium"
 
     public_network_access_enabled = false
   }
@@ -78,5 +78,13 @@ module "privatelink" {
   resourcegroup = module.rg.groups.demo.name
   location      = module.rg.groups.demo.location
 
-  endpoints = local.endpoints
+  endpoints = {
+    registry = {
+      name                           = module.naming.private_endpoint.name
+      subnet_id                      = module.network.subnets.sn1.id
+      private_connection_resource_id = module.acr.registry.id
+      private_dns_zone_ids           = [module.private_dns.zones.registry.id]
+      subresource_names              = ["registry"]
+    }
+  }
 }

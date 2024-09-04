@@ -10,12 +10,10 @@ resource "azurerm_container_registry_task" "tasks" {
   log_template          = try(each.value.log_template, null)
   tags                  = try(each.value.tags, var.tags, null)
 
-
   dynamic "agent_setting" {
-    for_each = try(each.value.agent_setting, null) != null ? [1] : []
-
+    for_each = each.value.agent_setting != null ? [each.value.agent_setting] : []
     content {
-      cpu = try(each.value.agent_setting.cpu, 2)
+      cpu = try(agent_setting.value.cpu, 2)
     }
   }
 
@@ -141,7 +139,7 @@ resource "azurerm_user_assigned_identity" "identity" {
   }
 
   name                = try(each.value.identity.name, "uai-${each.key}")
-  resource_group_name = try(each.value.resourcegroup, var.resourcegroup)
+  resource_group_name = try(each.value.resource_group, var.resource_group)
   location            = try(each.value.location, var.location)
   tags                = try(each.value.identity.tags, var.tags, null)
 }
