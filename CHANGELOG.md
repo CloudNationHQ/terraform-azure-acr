@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.7.0...v2.0.0) (2024-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* * data structure has changed due to renaming of properties.
+
+### Features
+
+* aligned several properties ([#60](https://github.com/CloudNationHQ/terraform-azure-acr/issues/60)) ([12cc189](https://github.com/CloudNationHQ/terraform-azure-acr/commit/12cc18929519d0e72b83340459841c05dd7e18b0))
+
 ## [1.7.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.6.0...v1.7.0) (2024-08-28)
 
 
