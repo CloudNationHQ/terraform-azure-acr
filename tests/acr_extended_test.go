@@ -46,7 +46,7 @@ func TestContainerRegistry(t *testing.T) {
 		terraform.InitAndApply(t, tfOpts)
 
 		acrMap := terraform.OutputMap(t, tfOpts, "registry")
-		subscriptionID := terraform.Output(t, tfOpts, "subscriptionId")
+		subscriptionID := terraform.Output(t, tfOpts, "subscription_id")
 
 		acrDetails := &ACRDetails{
 			ResourceGroupName: acrMap["resource_group_name"],

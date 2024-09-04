@@ -28,6 +28,6 @@ This submodule streamlines container registry tasks management.
 |------|-------------|------|---------|:--------:|
 | <a name="input_location"></a> [location](#input\_location) | contains the region | `string` | `null` | no |
 | <a name="input_naming"></a> [naming](#input\_naming) | contains naming convention | `map(string)` | `null` | no |
-| <a name="input_resourcegroup"></a> [resourcegroup](#input\_resourcegroup) | contains the resourcegroup name | `string` | `null` | no |
+| <a name="input_resource_group"></a> [resource_group](#input\_resource_group) | contains the resource group name | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags to be added to the resources | `map(string)` | `{}` | no |
 | <a name="input_tasks"></a> [tasks](#input\_tasks) | contains container registry tasks | `any` | n/a | yes |
