@@ -5,11 +5,29 @@
 
 ### ⚠ BREAKING CHANGES
 
-* * data structure has changed due to renaming of properties.
+* data structure has changed due to renaming of properties.
 
 ### Features
 
 * aligned several properties ([#60](https://github.com/CloudNationHQ/terraform-azure-acr/issues/60)) ([12cc189](https://github.com/CloudNationHQ/terraform-azure-acr/commit/12cc18929519d0e72b83340459841c05dd7e18b0))
+
+### Upgrade from v1.7.0 to v2.0.0:
+
+- Update module reference to: `version = "~> 2.0"`
+- Rename or remove properties in registry object:
+  - resourcegroup -> resource_group
+  - trust_policy.enabled -> trust_policy
+  - retention_policy.enabled -> retention_policy
+  - replications -> georeplications
+  - encryption.enable -> encryption
+- Rename variable (optional):
+  - resourcegroup -> resource_group
+- Rename output variable:
+  - subscriptionId -> subscription_id'
+  - acr -> registry
+- Change defaults:
+  - identity is now fully optional 
+  - enabled property under trust_policy now defaults to false
 
 ## [1.7.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v1.6.0...v1.7.0) (2024-08-28)
 
