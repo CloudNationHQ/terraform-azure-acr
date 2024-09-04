@@ -1,39 +1,6 @@
 data "azurerm_subscription" "current" {}
 data "azurerm_client_config" "current" {}
 
-
-# user managed identity
-resource "azurerm_user_assigned_identity" "mi" {
-  for_each = lookup(var.registry, "encryption", null) != null || (lookup(
-    lookup(var.registry, "identity", {}), "type", null) == "UserAssigned" && lookup(
-    lookup(var.registry, "identity", {}), "identity_ids", null
-  ) == null) ? { "mi" : true } : {}
-
-  name                = try(var.registry.encryption.identity_name, "uai-${var.registry.name}")
-  resource_group_name = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
-  location            = coalesce(lookup(var.registry, "location", null), var.location)
-  tags                = try(var.registry.tags, var.tags, null)
-}
-
-# role assignments
-resource "azurerm_role_assignment" "rol" {
-  for_each = lookup(var.registry, "encryption", null) != null ? { "mi" : true } : {}
-
-  scope                = var.registry.encryption.role_assignment_scope
-  role_definition_name = "Key Vault Crypto Officer"
-  principal_id         = azurerm_user_assigned_identity.mi[each.key].principal_id
-}
-
-resource "azurerm_role_assignment" "admins" {
-  for_each = lookup(
-    var.registry, "scope_maps", {}
-  )
-
-  scope                = coalesce(lookup(each.value, "key_vault_id", null), lookup(var.registry, "vault", null))
-  role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
 # container registry
 resource "azurerm_container_registry" "acr" {
   name                          = var.registry.name
@@ -217,4 +184,36 @@ resource "azurerm_container_registry_agent_pool" "pools" {
   virtual_network_subnet_id = lookup(each.value, "virtual_network_subnet_id", null)
 
   tags = try(each.value.tags, var.tags, null)
+}
+
+# user managed identity
+resource "azurerm_user_assigned_identity" "mi" {
+  for_each = lookup(var.registry, "encryption", null) != null || (lookup(
+    lookup(var.registry, "identity", {}), "type", null) == "UserAssigned" && lookup(
+    lookup(var.registry, "identity", {}), "identity_ids", null
+  ) == null) ? { "mi" : true } : {}
+
+  name                = try(var.registry.encryption.identity_name, "uai-${var.registry.name}")
+  resource_group_name = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
+  location            = coalesce(lookup(var.registry, "location", null), var.location)
+  tags                = try(var.registry.tags, var.tags, null)
+}
+
+# role assignments
+resource "azurerm_role_assignment" "rol" {
+  for_each = lookup(var.registry, "encryption", null) != null ? { "mi" : true } : {}
+
+  scope                = var.registry.encryption.role_assignment_scope
+  role_definition_name = "Key Vault Crypto Officer"
+  principal_id         = azurerm_user_assigned_identity.mi[each.key].principal_id
+}
+
+resource "azurerm_role_assignment" "admins" {
+  for_each = lookup(
+    var.registry, "scope_maps", {}
+  )
+
+  scope                = coalesce(lookup(each.value, "key_vault_id", null), lookup(var.registry, "vault", null))
+  role_definition_name = "Key Vault Secrets Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
