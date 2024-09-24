@@ -7,7 +7,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   groups = {
     demo = {
@@ -19,7 +19,7 @@ module "rg" {
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   naming = local.naming
 
@@ -45,7 +45,7 @@ module "kv" {
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   naming = local.naming
 
@@ -66,7 +66,7 @@ module "network" {
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   resource_group = module.rg.groups.demo.name
   location       = module.rg.groups.demo.location
@@ -76,7 +76,7 @@ module "tasks" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   naming = local.naming
 

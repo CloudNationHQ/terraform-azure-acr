@@ -7,7 +7,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   groups = {
     demo = {
@@ -19,7 +19,7 @@ module "rg" {
 
 module "network" {
   source  = "cloudnationhq/vnet/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   naming = local.naming
 
@@ -40,7 +40,7 @@ module "network" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   registry = {
     name           = module.naming.container_registry.name_unique
@@ -54,9 +54,9 @@ module "acr" {
 
 module "private_dns" {
   source  = "cloudnationhq/pdns/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
-  resourcegroup = module.rg.groups.demo.name
+  resource_group = module.rg.groups.demo.name
 
   zones = {
     registry = {
@@ -73,10 +73,10 @@ module "private_dns" {
 
 module "privatelink" {
   source  = "cloudnationhq/pe/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
-  resourcegroup = module.rg.groups.demo.name
-  location      = module.rg.groups.demo.location
+  resource_group = module.rg.groups.demo.name
+  location       = module.rg.groups.demo.location
 
   endpoints = {
     registry = {

@@ -6,7 +6,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   groups = {
     demo = {
@@ -18,7 +18,7 @@ module "rg" {
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   naming = local.naming
 
@@ -31,7 +31,7 @@ module "kv" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   naming = local.naming
 

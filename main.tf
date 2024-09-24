@@ -16,23 +16,8 @@ resource "azurerm_container_registry" "acr" {
   anonymous_pull_enabled        = try(var.registry.anonymous_pull_enabled, false)
   export_policy_enabled         = try(var.registry.export_policy_enabled, true)
   data_endpoint_enabled         = try(var.registry.data_endpoint_enabled, false)
-
-  dynamic "trust_policy" {
-    for_each = lookup(var.registry, "trust_policy", null) != null ? { "default" : var.registry.trust_policy } : {}
-
-    content {
-      enabled = try(trust_policy.value.enabled, false)
-    }
-  }
-
-  dynamic "retention_policy" {
-    for_each = lookup(var.registry, "retention_policy", null) != null ? { "default" : var.registry.retention_policy } : {}
-
-    content {
-      enabled = try(retention_policy.value.enabled, false)
-      days    = try(retention_policy.value.days, 7)
-    }
-  }
+  trust_policy_enabled          = try(var.registry.trust_policy.enabled, false)
+  retention_policy_in_days      = try(var.registry.retention_policy.days, 7)
 
   dynamic "identity" {
     for_each = lookup(var.registry, "identity", null) != null || lookup(var.registry, "encryption", null) != null ? [1] : []
@@ -66,7 +51,6 @@ resource "azurerm_container_registry" "acr" {
     for_each = lookup(var.registry, "encryption", null) != null ? { "default" : var.registry.encryption } : {}
 
     content {
-      enabled            = try(encryption.value.enabled, true)
       key_vault_key_id   = encryption.value.key_vault_key_id
       identity_client_id = azurerm_user_assigned_identity.mi["mi"].client_id
     }
