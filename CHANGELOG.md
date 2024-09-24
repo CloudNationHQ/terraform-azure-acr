@@ -9,7 +9,7 @@
 
 ### Features
 
-* upgrade azurerm provder to v4 ([#63](https://github.com/CloudNationHQ/terraform-azure-acr/issues/63)) ([c06c825](https://github.com/CloudNationHQ/terraform-azure-acr/commit/c06c825e7b11b8614c78d8d34b35956a0ffbac36))
+* upgrade azurerm provider to v4 ([#63](https://github.com/CloudNationHQ/terraform-azure-acr/issues/63)) ([c06c825](https://github.com/CloudNationHQ/terraform-azure-acr/commit/c06c825e7b11b8614c78d8d34b35956a0ffbac36))
 
 ### Upgrade from v2.0.0 to v3.0.0:
 
