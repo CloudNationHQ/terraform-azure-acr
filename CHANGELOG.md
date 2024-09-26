@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.0.0...v3.0.1) (2024-09-26)
+
+
+### Bug Fixes
+
+* fix defaults retention policy in days ([#65](https://github.com/CloudNationHQ/terraform-azure-acr/issues/65)) ([18a276b](https://github.com/CloudNationHQ/terraform-azure-acr/commit/18a276b09f05070743567b659a1878f44204e9da))
+
 ## [3.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v2.0.0...v3.0.0) (2024-09-24)
 
 
