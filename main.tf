@@ -16,8 +16,8 @@ resource "azurerm_container_registry" "acr" {
   anonymous_pull_enabled        = try(var.registry.anonymous_pull_enabled, false)
   export_policy_enabled         = try(var.registry.export_policy_enabled, true)
   data_endpoint_enabled         = try(var.registry.data_endpoint_enabled, false)
-  trust_policy_enabled          = try(var.registry.trust_policy.enabled, false)
-  retention_policy_in_days      = try(var.registry.retention_policy.days, 7)
+  trust_policy_enabled          = try(var.registry.trust_policy_enabled, false)
+  retention_policy_in_days      = try(var.registry.retention_policy_in_days, 0)
 
   dynamic "identity" {
     for_each = lookup(var.registry, "identity", null) != null || lookup(var.registry, "encryption", null) != null ? [1] : []
