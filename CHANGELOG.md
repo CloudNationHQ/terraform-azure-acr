@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.0.1...v3.1.0) (2024-10-11)
+
+
+### Features
+
+* auto generated docs and refine makefile ([#68](https://github.com/CloudNationHQ/terraform-azure-acr/issues/68)) ([170da12](https://github.com/CloudNationHQ/terraform-azure-acr/commit/170da1211ab51a666f5a5ae1559bdfa475fdf171))
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#67](https://github.com/CloudNationHQ/terraform-azure-acr/issues/67)) ([bd69966](https://github.com/CloudNationHQ/terraform-azure-acr/commit/bd6996642446559de35d85cf705740d7ceb43e15))
+
 ## [3.0.1](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.0.0...v3.0.1) (2024-09-26)
 
 
