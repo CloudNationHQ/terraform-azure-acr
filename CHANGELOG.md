@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.1.0...v3.2.0) (2024-11-11)
+
+
+### Features
+
+* enhance testing with sequential, parallel modes and flags for exceptions and skip-destroy ([#70](https://github.com/CloudNationHQ/terraform-azure-acr/issues/70)) ([4887664](https://github.com/CloudNationHQ/terraform-azure-acr/commit/48876641542a2ac0eb2fcd3343931e3b6cf0d79c))
+
 ## [3.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.0.1...v3.1.0) (2024-10-11)
 
 
