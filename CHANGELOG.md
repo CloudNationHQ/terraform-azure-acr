@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.2.0...v3.2.1) (2024-11-13)
+
+
+### Bug Fixes
+
+* fix submodule documentation generation ([#72](https://github.com/CloudNationHQ/terraform-azure-acr/issues/72)) ([37eddce](https://github.com/CloudNationHQ/terraform-azure-acr/commit/37eddced492540efa769ae6696f8e3e9f21dbec6))
+
 ## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.1.0...v3.2.0) (2024-11-11)
 
 
