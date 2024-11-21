@@ -11,7 +11,7 @@ resource "azurerm_container_registry_task" "tasks" {
   tags                  = try(each.value.tags, var.tags, null)
 
   dynamic "agent_setting" {
-    for_each = each.value.agent_setting != null ? [each.value.agent_setting] : []
+    for_each = try(each.value.agent_setting, null) != null ? [each.value.agent_setting] : []
     content {
       cpu = try(agent_setting.value.cpu, 2)
     }
