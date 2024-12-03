@@ -135,7 +135,7 @@ resource "azurerm_container_registry_task" "tasks" {
 resource "azurerm_user_assigned_identity" "identity" {
   for_each = {
     for key, task in var.tasks : key => task
-    if task.identity != null && (task.identity.type == "UserAssigned" || task.identity.type == "SystemAssigned, UserAssigned")
+    if try(task.identity, null) != null && (try(task.identity.type, null) == "UserAssigned" || try(task.identity.type, null) == "SystemAssigned, UserAssigned")
   }
 
   name                = try(each.value.identity.name, "uai-${each.key}")
