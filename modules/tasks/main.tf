@@ -8,10 +8,14 @@ resource "azurerm_container_registry_task" "tasks" {
   enabled               = try(each.value.enabled, true)
   is_system_task        = try(each.value.is_system_task, false)
   log_template          = try(each.value.log_template, null)
-  tags                  = try(each.value.tags, var.tags, null)
+
+  tags = try(
+    each.value.tags, var.tags, null
+  )
 
   dynamic "agent_setting" {
     for_each = each.value.agent_setting != null ? [each.value.agent_setting] : []
+
     content {
       cpu = try(agent_setting.value.cpu, 2)
     }
@@ -82,9 +86,9 @@ resource "azurerm_container_registry_task" "tasks" {
   }
 
   dynamic "source_trigger" {
-    for_each = {
-      for st in local.striggers : "${st.task_key}.${st.trigger_key}" => st
-    }
+    for_each = try(
+      each.value.source_triggers, {}
+    )
 
     content {
       name           = source_trigger.value.name
@@ -107,9 +111,9 @@ resource "azurerm_container_registry_task" "tasks" {
   }
 
   dynamic "timer_trigger" {
-    for_each = {
-      for tt in local.ttriggers : "${tt.task_key}.${tt.trigger_key}" => tt
-    }
+    for_each = try(
+      each.value.timer_triggers, {}
+    )
 
     content {
       name     = timer_trigger.value.name
@@ -129,6 +133,16 @@ resource "azurerm_container_registry_task" "tasks" {
       )
     }
   }
+}
+
+#  run tasks now
+resource "azurerm_container_registry_task_schedule_run_now" "tasks" {
+  for_each = {
+    for key, task in var.tasks : key => task
+    if try(task.schedule_run_now, false) == true
+  }
+
+  container_registry_task_id = azurerm_container_registry_task.tasks[each.key].id
 }
 
 # user assigned identity

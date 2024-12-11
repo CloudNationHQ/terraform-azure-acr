@@ -1,28 +1,26 @@
-This sample demonstrates setting up scope maps, specifying fine-grained permissions for container image access, to enforce security and control in multi-user environments.
+# Scope Maps
 
-## Usage
+This deploys multiple scope maps
+
+## Types
 
 ```hcl
-module "acr" {
-  source  = "cloudnationhq/acr/azure"
-  version = "~> 1.6"
+registry = object({
+  name           = string
+  location       = string
+  resource_group = string
+  vault          = optional(string)
+  sku            = optional(string)
 
-  registry = {
-    name          = module.naming.container_registry.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    vault         = module.kv.vault.id
-    sku           = "Premium"
-
-    scope_maps = {
-      prod = {
-        token_expiry = "2024-03-22T17:57:36+08:00"
-        actions = [
-          "repositories/repo1/content/read",
-          "repositories/repo1/content/write"
-        ]
-      }
-    }
-  }
-}
-````
+  scope_maps = optional(map(object({
+    actions = list(string)
+    tokens = optional(map(object({
+      expiry = optional(string)
+      secret = optional(object({
+        password1 = string
+        password2 = string
+      }))
+    })))
+  })))
+})
+```

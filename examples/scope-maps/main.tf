@@ -1,7 +1,7 @@
 module "naming" {
   source = "github.com/cloudnationhq/az-cn-module-tf-naming"
 
-  suffix = ["demo", "scope"]
+  suffix = ["demo", "dev"]
 }
 
 module "rg" {
@@ -18,7 +18,7 @@ module "rg" {
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   naming = local.naming
 
@@ -26,12 +26,27 @@ module "kv" {
     name           = module.naming.key_vault.name_unique
     location       = module.rg.groups.demo.location
     resource_group = module.rg.groups.demo.name
+
+    secrets = {
+      random_string = {
+        token2-1 = {
+          length          = 24
+          special         = false
+          expiration_date = "2025-08-22T17:57:36+08:00"
+        }
+        token2-2 = {
+          length          = 24
+          special         = false
+          expiration_date = "2025-08-22T17:57:36+08:00"
+        }
+      }
+    }
   }
 }
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   naming = local.naming
 
@@ -44,11 +59,24 @@ module "acr" {
 
     scope_maps = {
       prd = {
-        token_expiry = "2025-03-22T17:57:36+08:00"
         actions = [
           "repositories/repo1/content/read",
           "repositories/repo1/content/write"
         ]
+        tokens = {
+          token1 = {
+            # generated from module
+            expiry = "2025-02-22T17:57:36+08:00"
+          }
+          token2 = {
+            # generated outside module
+            expiry = "2025-08-22T17:57:36+08:00"
+            secret = {
+              password1 = module.kv.secrets.token2-1.value
+              password2 = module.kv.secrets.token2-2.value
+            }
+          }
+        }
       }
     }
   }

@@ -26,5 +26,22 @@ module "acr" {
     location       = module.rg.groups.demo.location
     resource_group = module.rg.groups.demo.name
     sku            = "Premium"
+
+    cache_rules = {
+      backend = {
+        target_repo = "backend"
+        source_repo = "mcr.microsoft.com/azure-cli"
+      }
+
+      frontend = {
+        target_repo = "frontend"
+        source_repo = "mcr.microsoft.com/dotnet/runtime"
+      }
+
+      proxy = {
+        target_repo = "proxy"
+        source_repo = "mcr.microsoft.com/hello-world"
+      }
+    }
   }
 }

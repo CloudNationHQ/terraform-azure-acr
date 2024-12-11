@@ -1,8 +1,8 @@
 module "naming" {
   source  = "cloudnationhq/naming/azure"
-  version = "~> 0.1"
+  version = "~> 0.22"
 
-  suffix = ["demo", "prd"]
+  suffix = ["demo", "dev"]
 }
 
 module "rg" {
@@ -19,7 +19,7 @@ module "rg" {
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   resource_group = module.rg.groups.demo.name
   location       = module.rg.groups.demo.location
@@ -45,7 +45,7 @@ steps:
 EOF
         )
       }
-      timer_trigger = {
+      timer_triggers = {
         hello = {
           name     = "hello_trigger"
           schedule = "*/5 * * * *"
@@ -61,7 +61,7 @@ EOF
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   registry = {
     name           = module.naming.container_registry.name_unique
