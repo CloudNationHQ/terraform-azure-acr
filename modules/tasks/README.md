@@ -21,6 +21,7 @@ This submodule streamlines container registry tasks management.
 | Name | Type |
 |------|------|
 | [azurerm_container_registry_task.tasks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_task) | resource |
+| [azurerm_container_registry_task_schedule_run_now.tasks](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_task_schedule_run_now) | resource |
 | [azurerm_user_assigned_identity.identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 
 ## Inputs
