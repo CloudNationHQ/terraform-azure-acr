@@ -11,6 +11,10 @@
 
 * small refactor ([#77](https://github.com/CloudNationHQ/terraform-azure-acr/issues/77)) ([c582f2c](https://github.com/CloudNationHQ/terraform-azure-acr/commit/c582f2ca527852e6b6f3fa9b9add18891755e55c))
 
+### Upgrade from v3.2.2 to v4.0.0:
+
+- Update module reference to: `version = "~> 4.0"`
+
 ## [3.2.2](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.2.1...v3.2.2) (2024-11-21)
 
 
