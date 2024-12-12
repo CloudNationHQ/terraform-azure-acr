@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.2.2...v4.0.0) (2024-12-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* some keys regarding registry tokens and secrets have changed, which will cause a replacement.
+
+### Features
+
+* small refactor ([#77](https://github.com/CloudNationHQ/terraform-azure-acr/issues/77)) ([c582f2c](https://github.com/CloudNationHQ/terraform-azure-acr/commit/c582f2ca527852e6b6f3fa9b9add18891755e55c))
+
 ## [3.2.2](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v3.2.1...v3.2.2) (2024-11-21)
 
 
