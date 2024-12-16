@@ -25,11 +25,18 @@ End-to-end testing is not conducted on these modules, as they are individual com
 ## Features
 
 - data replication is possible across different geolocations
-- detailed access control is ensured through the use of scope maps
-- data protection is enhanced by encryption for data at rest
+- detailed access control is ensured through scope maps and tokens
+- data protection is enhanced by encryption with user-managed identities
+- multiple task types support docker, encoded, and file-based operations
+- flexible triggers enable scheduled, source, and base image automations
+- dedicated agent pools provide enhanced scalability and isolation
+- network rules allow granular access control and IP restrictions
+- key vault integration enables secure secret management
+- webhook support enables automated notifications and integrations
+- custom cache rules optimize container image delivery
+- immediate task execution is supported through run-now capability
+- platform settings allow customized architecture and OS configurations
 - utilization of terratest for robust validation.
-- enables the configuration of multiple tasks and triggers
-- supports enhanced scalability and isolation through dedicated agent pools
 - integrates seamlessly with private endpoint capabilities for direct and secure connectivity.
 
 <!-- BEGIN_TF_DOCS -->
