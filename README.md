@@ -208,6 +208,10 @@ Description: contains the agent pools
 Description: contains container registry related configuration
 <!-- END_TF_DOCS -->
 
+## Goals
+
+For more information, please see our [goals and non-goals](./GOALS.md).
+
 ## Testing
 
 For more information, please see our testing [guidelines](./TESTING.md)
