@@ -43,22 +43,39 @@ module "kv" {
   }
 }
 
+module "identity" {
+  source  = "cloudnationhq/uai/azure"
+  version = "~> 2.0"
+
+  config = {
+    name                = module.naming.user_assigned_identity.name
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+  }
+}
+
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   naming = local.naming
 
   registry = {
-    name           = module.naming.container_registry.name_unique
-    location       = module.rg.groups.demo.location
-    resource_group = module.rg.groups.demo.name
-    sku            = "Premium"
+    name                = module.naming.container_registry.name_unique
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+    sku                 = "Premium"
+
+    identity = {
+      type         = "UserAssigned"
+      identity_ids = [module.identity.config.id]
+    }
 
     encryption = {
-      enabled               = true
-      key_vault_key_id      = module.kv.keys.demo.id
-      role_assignment_scope = module.kv.vault.id
+      key_vault_key_id   = module.kv.keys.demo.id
+      identity_client_id = module.identity.config.client_id
+      key_vault_scope    = module.kv.vault.id
+      principal_id       = module.identity.config.principal_id
     }
   }
 }

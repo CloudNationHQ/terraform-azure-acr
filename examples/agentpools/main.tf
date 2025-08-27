@@ -40,15 +40,15 @@ module "network" {
 
 module "registry" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   naming = local.naming
 
   registry = {
-    name           = module.naming.container_registry.name_unique
-    location       = module.rg.groups.demo.location
-    resource_group = module.rg.groups.demo.name
-    sku            = "Premium"
+    name                = module.naming.container_registry.name_unique
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+    sku                 = "Premium"
 
     public_network_access_enabled = false
 

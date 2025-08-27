@@ -2,103 +2,112 @@ data "azurerm_client_config" "current" {}
 
 # container registry
 resource "azurerm_container_registry" "acr" {
+  resource_group_name = coalesce(
+    lookup(
+      var.registry, "resource_group_name", null
+    ), var.resource_group_name
+  )
+
+  location = coalesce(
+    lookup(
+      var.registry, "location", null
+    ), var.location
+  )
+
   name                          = var.registry.name
-  resource_group_name           = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
-  location                      = coalesce(lookup(var.registry, "location", null), var.location)
-  sku                           = try(var.registry.sku, "Standard")
-  admin_enabled                 = try(var.registry.admin_enabled, false)
-  quarantine_policy_enabled     = try(var.registry.quarantine_policy_enabled, false)
-  network_rule_bypass_option    = try(var.registry.network_rule_bypass_option, "AzureServices")
-  public_network_access_enabled = try(var.registry.public_network_access_enabled, true)
-  zone_redundancy_enabled       = try(var.registry.zone_redundancy_enabled, false)
-  tags                          = try(var.registry.tags, var.tags, {})
-  anonymous_pull_enabled        = try(var.registry.anonymous_pull_enabled, false)
-  export_policy_enabled         = try(var.registry.export_policy_enabled, true)
-  data_endpoint_enabled         = try(var.registry.data_endpoint_enabled, false)
-  trust_policy_enabled          = try(var.registry.trust_policy_enabled, false)
-  retention_policy_in_days      = try(var.registry.retention_policy_in_days, 0)
+  sku                           = var.registry.sku
+  admin_enabled                 = var.registry.admin_enabled
+  quarantine_policy_enabled     = var.registry.quarantine_policy_enabled
+  network_rule_bypass_option    = var.registry.network_rule_bypass_option
+  public_network_access_enabled = var.registry.public_network_access_enabled
+  zone_redundancy_enabled       = var.registry.zone_redundancy_enabled
+  anonymous_pull_enabled        = var.registry.anonymous_pull_enabled
+  export_policy_enabled         = var.registry.export_policy_enabled
+  data_endpoint_enabled         = var.registry.data_endpoint_enabled
+  trust_policy_enabled          = var.registry.trust_policy_enabled
+  retention_policy_in_days      = var.registry.retention_policy_in_days
+
+  tags = coalesce(
+    var.registry.tags, var.tags
+  )
 
   dynamic "identity" {
-    for_each = lookup(
-      var.registry, "identity", null
-    ) != null || lookup(var.registry, "encryption", null) != null ? [1] : []
+    for_each = var.registry.identity != null ? [var.registry.identity] : []
 
     content {
-      type = coalesce(
-        try(var.registry.identity.type, null),
-        var.registry.encryption != null ? "UserAssigned" : null
-      )
-
-      identity_ids = distinct(concat(
-        lookup(lookup(var.registry, "identity", {}), "identity_ids", []),
-
-        # if encryption is defined, add the user-assigned identity.
-        lookup(var.registry, "encryption", null) != null ? [azurerm_user_assigned_identity.mi["mi"].id] : [],
-
-        # if type is "UserAssigned" and no identity_ids are provided, add the user-assigned identity.
-        lookup(lookup(var.registry, "identity", {}), "type", null) == "UserAssigned" && length(lookup(lookup(var.registry, "identity", {}), "identity_ids", [])) == 0 ? [azurerm_user_assigned_identity.mi["mi"].id] : []
-      ))
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
     }
   }
 
   dynamic "georeplications" {
-    for_each = var.registry.sku == "Premium" ? lookup(var.registry, "georeplications", {}) : {}
+    for_each = var.registry.georeplications
 
     content {
       location                  = georeplications.value.location
-      zone_redundancy_enabled   = try(georeplications.value.zone_redundancy_enabled, false)
-      regional_endpoint_enabled = try(georeplications.value.regional_endpoint_enabled, false)
-      tags                      = try(georeplications.value.tags, var.tags, null)
+      zone_redundancy_enabled   = georeplications.value.zone_redundancy_enabled
+      regional_endpoint_enabled = georeplications.value.regional_endpoint_enabled
+
+      tags = coalesce(
+        georeplications.value.tags, var.tags
+      )
     }
   }
 
   dynamic "encryption" {
-    for_each = lookup(var.registry, "encryption", null) != null ? { "default" : var.registry.encryption } : {}
+    for_each = var.registry.encryption != null ? { "default" : var.registry.encryption } : {}
 
     content {
       key_vault_key_id   = encryption.value.key_vault_key_id
-      identity_client_id = azurerm_user_assigned_identity.mi["mi"].client_id
+      identity_client_id = encryption.value.identity_client_id
     }
   }
 
   dynamic "network_rule_set" {
-    for_each = lookup(var.registry, "network_rule_set", null) != null ? [1] : []
+    for_each = var.registry.network_rule_set != null ? [var.registry.network_rule_set] : []
 
     content {
-      default_action = lookup(var.registry.network_rule_set, "default_action", "Allow")
+      default_action = network_rule_set.value.default_action
 
       dynamic "ip_rule" {
-        for_each = lookup(
-          var.registry.network_rule_set, "ip_rules", {}
-        )
+        for_each = network_rule_set.value.ip_rules
 
         content {
-          action   = "Allow" # Only Allow is supported at this time
+          action   = ip_rule.value.action
           ip_range = ip_rule.value.ip_range
         }
       }
     }
   }
   depends_on = [
-    azurerm_role_assignment.rol
+    azurerm_role_assignment.encryption
   ]
 }
 
 # scope maps
 resource "azurerm_container_registry_scope_map" "scope" {
-  for_each                = lookup(var.registry, "scope_maps", {})
-  name                    = lookup(each.value, "name", "scope-${each.key}")
+  for_each = var.registry.scope_maps
+
+  resource_group_name = coalesce(
+    lookup(
+      var.registry, "resource_group_name", null
+    ), var.resource_group_name
+  )
+
+  name = coalesce(
+    each.value.name, "scope-${each.key}"
+  )
+
   container_registry_name = azurerm_container_registry.acr.name
-  resource_group_name     = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
   actions                 = each.value.actions
-  description             = lookup(each.value, "description", null)
+  description             = each.value.description
 }
 
 # tokens
 resource "azurerm_container_registry_token" "token" {
   for_each = merge([
-    for scope_key, scope in lookup(var.registry, "scope_maps", {}) : {
-      for token_key, token in lookup(scope, "tokens", {}) :
+    for scope_key, scope in var.registry.scope_maps : {
+      for token_key, token in scope.tokens :
       "${scope_key}.${token_key}" => {
         scope_key = scope_key
         token_key = token_key
@@ -106,17 +115,27 @@ resource "azurerm_container_registry_token" "token" {
       }
     }
   ]...)
-  name                    = lookup(each.value.token, "name", "token-${each.value.scope_key}-${each.value.token_key}")
+
+  resource_group_name = coalesce(
+    lookup(
+      var.registry, "resource_group_name", null
+    ), var.resource_group_name
+  )
+
+  name = coalesce(
+    each.value.token.name, "token-${each.value.scope_key}-${each.value.token_key}"
+  )
+
   container_registry_name = azurerm_container_registry.acr.name
-  resource_group_name     = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
   scope_map_id            = azurerm_container_registry_scope_map.scope[each.value.scope_key].id
+  enabled                 = each.value.token.enabled
 }
 
 # token passwords
 resource "azurerm_container_registry_token_password" "password" {
   for_each = merge([
-    for scope_key, scope in lookup(var.registry, "scope_maps", {}) : {
-      for token_key, token in lookup(scope, "tokens", {}) :
+    for scope_key, scope in var.registry.scope_maps : {
+      for token_key, token in scope.tokens :
       "${scope_key}.${token_key}" => {
         scope_key = scope_key
         token_key = token_key
@@ -128,10 +147,10 @@ resource "azurerm_container_registry_token_password" "password" {
   container_registry_token_id = azurerm_container_registry_token.token[each.key].id
 
   password1 {
-    expiry = lookup(each.value.token, "expiry", null)
+    expiry = each.value.token.expiry
   }
   password2 {
-    expiry = lookup(each.value.token, "expiry", null)
+    expiry = each.value.token.expiry
   }
 }
 
@@ -140,8 +159,8 @@ resource "azurerm_key_vault_secret" "secret" {
   for_each = {
     for pair in flatten([
       for k, v in merge([
-        for scope_key, scope in lookup(var.registry, "scope_maps", {}) : {
-          for token_key, token in lookup(scope, "tokens", {}) :
+        for scope_key, scope in var.registry.scope_maps : {
+          for token_key, token in scope.tokens :
           "${scope_key}.${token_key}" => {
             scope_key = scope_key
             token_key = token_key
@@ -165,102 +184,109 @@ resource "azurerm_key_vault_secret" "secret" {
     ]) : "${pair.key}-${pair.password_num}" => pair
   }
 
-  key_vault_id    = coalesce(lookup(var.registry, "vault", null))
-  name            = lookup(each.value.value.token, "secret_name", "${var.naming.key_vault_secret}-${each.value.value.token_key}-${each.value.password_num}")
-  tags            = var.tags
-  value           = each.value.password_value
-  expiration_date = lookup(each.value.value.token, "expiry", null)
-  not_before_date = try(each.value.value.token.not_before_date, null)
-  content_type    = try(each.value.value.token.content_type, null)
-  depends_on      = [azurerm_role_assignment.admins]
+  name = coalesce(
+    each.value.value.token.secret_name, "${var.naming.key_vault_secret}-${each.value.value.token_key}-${each.value.password_num}"
+  )
+
+  key_vault_id = var.registry.vault
+  value        = coalesce(each.value.value.token.value_wo_version, each.value.password_value)
+
+  expiration_date = each.value.value.token.expiry
+  not_before_date = each.value.value.token.not_before_date
+  content_type    = each.value.value.token.content_type
+
+  tags = coalesce(
+    var.registry.tags, var.tags
+  )
+
+  depends_on = [azurerm_role_assignment.admins]
 }
 
 # agent pools
 resource "azurerm_container_registry_agent_pool" "pools" {
-  for_each = lookup(
-    var.registry, "agentpools", {}
+  for_each = var.registry.agentpools
+
+  resource_group_name = coalesce(
+    lookup(
+      var.registry, "resource_group_name", null
+    ), var.resource_group_name
   )
 
-  name                    = each.key
+  name = coalesce(
+    each.value.name, each.key
+  )
+
   container_registry_name = azurerm_container_registry.acr.name
-  resource_group_name     = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
   location                = coalesce(lookup(var.registry, "location", null), var.location)
 
-  instance_count            = lookup(each.value, "instances", 1)
-  tier                      = lookup(each.value, "tier", "S2")
-  virtual_network_subnet_id = lookup(each.value, "virtual_network_subnet_id", null)
+  instance_count            = each.value.instances
+  tier                      = each.value.tier
+  virtual_network_subnet_id = each.value.virtual_network_subnet_id
 
-  tags = try(
-    each.value.tags, var.tags, null
+  tags = coalesce(
+    each.value.tags, var.tags
   )
 }
 
 # webhooks
 resource "azurerm_container_registry_webhook" "webhook" {
-  for_each = lookup(
-    var.registry, "webhooks", {}
+  for_each = var.registry.webhooks
+
+  resource_group_name = coalesce(
+    lookup(
+      var.registry, "resource_group_name", null
+    ), var.resource_group_name
   )
 
-  name                = try(each.value.name, join("", [var.naming.container_registry_webhook, each.key]))
-  resource_group_name = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
-  registry_name       = azurerm_container_registry.acr.name
-  location            = coalesce(lookup(var.registry, "location", null), var.location)
+  location = coalesce(
+    lookup(
+      var.registry, "location", null
+    ), var.location
+  )
 
+  name = coalesce(
+    each.value.name, join("", [var.naming.container_registry_webhook, each.key])
+  )
+
+  registry_name  = azurerm_container_registry.acr.name
   service_uri    = each.value.service_uri
-  status         = lookup(each.value, "status", "enabled")
+  status         = each.value.status
   scope          = each.value.scope
   actions        = each.value.actions
-  custom_headers = lookup(each.value, "custom_headers", null)
+  custom_headers = each.value.custom_headers
 
-  tags = try(
-    each.value.tags, var.tags, null
+  tags = coalesce(
+    each.value.tags, var.tags
   )
 }
 
 # caching rules
 resource "azurerm_container_registry_cache_rule" "cache" {
-  for_each = lookup(
-    var.registry, "cache_rules", {}
+  for_each = var.registry.cache_rules
+
+  name = coalesce(
+    each.value.name, each.key
   )
 
-  name                  = lookup(each.value, "name", each.key)
   container_registry_id = azurerm_container_registry.acr.id
   target_repo           = each.value.target_repo
   source_repo           = each.value.source_repo
-  credential_set_id     = try(each.value.credential_set_id, null) # no resource for this yet
-}
-
-# user managed identity
-resource "azurerm_user_assigned_identity" "mi" {
-  for_each = lookup(
-    var.registry, "encryption", null
-    ) != null || (
-    lookup(
-      lookup(var.registry, "identity", {}), "type", null) == "UserAssigned" && lookup(
-      lookup(var.registry, "identity", {}), "identity_ids", null
-  ) == null) ? { "mi" : true } : {}
-
-  name                = try(var.registry.encryption.identity_name, "uai-${var.registry.name}")
-  resource_group_name = coalesce(lookup(var.registry, "resource_group", null), var.resource_group)
-  location            = coalesce(lookup(var.registry, "location", null), var.location)
-  tags                = try(var.registry.tags, var.tags, null)
+  credential_set_id     = each.value.credential_set_id
 }
 
 # role assignments
-resource "azurerm_role_assignment" "rol" {
-  for_each = lookup(var.registry, "encryption", null) != null ? { "mi" : true } : {}
+resource "azurerm_role_assignment" "encryption" {
+  for_each = var.registry.encryption != null ? { "encryption" = var.registry.encryption } : {}
 
-  scope                = var.registry.encryption.role_assignment_scope
+  scope                = each.value.key_vault_scope
   role_definition_name = "Key Vault Crypto Officer"
-  principal_id         = azurerm_user_assigned_identity.mi[each.key].principal_id
+  principal_id         = each.value.principal_id
 }
 
 resource "azurerm_role_assignment" "admins" {
-  for_each = lookup(
-    var.registry, "scope_maps", {}
-  )
+  for_each = var.registry.scope_maps
 
-  scope                = coalesce(lookup(each.value, "key_vault_id", null), lookup(var.registry, "vault", null))
+  scope                = coalesce(each.value.key_vault_id, var.registry.vault)
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = data.azurerm_client_config.current.object_id
 }
