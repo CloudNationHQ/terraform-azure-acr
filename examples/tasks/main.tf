@@ -17,12 +17,20 @@ module "rg" {
   }
 }
 
+module "identity" {
+  source  = "cloudnationhq/uai/azure"
+  version = "~> 2.0"
+
+  config = {
+    name                = module.naming.user_assigned_identity.name
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+  }
+}
+
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 4.0"
-
-  resource_group = module.rg.groups.demo.name
-  location       = module.rg.groups.demo.location
+  version = "~> 5.0"
 
   tasks = {
     say_hello = {
@@ -53,7 +61,8 @@ EOF
         }
       }
       identity = {
-        type = "UserAssigned"
+        type         = "UserAssigned"
+        identity_ids = [module.identity.config.id]
       }
     }
   }
@@ -61,12 +70,12 @@ EOF
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   registry = {
-    name           = module.naming.container_registry.name_unique
-    location       = module.rg.groups.demo.location
-    resource_group = module.rg.groups.demo.name
-    sku            = "Premium"
+    name                = module.naming.container_registry.name_unique
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+    sku                 = "Premium"
   }
 }

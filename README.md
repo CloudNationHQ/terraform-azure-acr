@@ -2,91 +2,210 @@
 
 This terraform module automates the creation of container registry resources on the azure cloud platform, enabling easier deployment and management of container images.
 
-## Goals
-
-The main objective is to create a more logic data structure, achieved by combining and grouping related resources together in a complex object.
-
-The structure of the module promotes reusability. It's intended to be a repeatable component, simplifying the process of building diverse workloads and platform accelerators consistently.
-
-A primary goal is to utilize keys and values in the object that correspond to the REST API's structure. This enables us to carry out iterations, increasing its practical value as time goes on.
-
-A last key goal is to separate logic from configuration in the module, thereby enhancing its scalability, ease of customization, and manageability.
-
-## Non-Goals
-
-These modules are not intended to be complete, ready-to-use solutions; they are designed as components for creating your own patterns.
-
-They are not tailored for a single use case but are meant to be versatile and applicable to a range of scenarios.
-
-Security standardization is applied at the pattern level, while the modules include default values based on best practices but do not enforce specific security standards.
-
-End-to-end testing is not conducted on these modules, as they are individual components and do not undergo the extensive testing reserved for complete patterns or solutions.
-
 ## Features
 
-- data replication is possible across different geolocations
-- detailed access control is ensured through scope maps and tokens
-- data protection is enhanced by encryption with user-managed identities
-- multiple task types support docker, encoded, and file-based operations
-- flexible triggers enable scheduled, source, and base image automations
-- dedicated agent pools provide enhanced scalability and isolation
-- network rules allow granular access control and IP restrictions
-- key vault integration enables secure secret management
-- webhook support enables automated notifications and integrations
-- custom cache rules optimize container image delivery
-- immediate task execution is supported through run-now capability
-- platform settings allow customized architecture and OS configurations
-- utilization of terratest for robust validation.
-- integrates seamlessly with private endpoint capabilities for direct and secure connectivity.
+Data replication is possible across different geolocations
+
+Detailed access control is ensured through scope maps and tokens
+
+Data protection is enhanced by encryption with user-managed identities
+
+Multiple task types support docker, encoded, and file-based operations
+
+Flexible triggers enable scheduled, source, and base image automations
+
+Dedicated agent pools provide enhanced scalability and isolation
+
+Network rules allow granular access control and IP restrictions
+
+Key vault integration enables secure secret management
+
+Webhook support enables automated notifications and integrations
+
+Custom cache rules optimize container image delivery
+
+Immediate task execution is supported through run-now capability
+
+Platform settings allow customized architecture and OS configurations
+
+Utilization of terratest for robust validation.
+
+Integrates seamlessly with private endpoint capabilities for direct and secure connectivity.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
-| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6 |
+The following requirements are needed by this module:
+
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
+
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
+The following providers are used by this module:
+
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [azurerm_container_registry.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) | resource |
-| [azurerm_container_registry_agent_pool.pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) | resource |
-| [azurerm_container_registry_cache_rule.cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) | resource |
-| [azurerm_container_registry_scope_map.scope](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) | resource |
-| [azurerm_container_registry_token.token](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) | resource |
-| [azurerm_container_registry_token_password.password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) | resource |
-| [azurerm_container_registry_webhook.webhook](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) | resource |
-| [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
-| [azurerm_role_assignment.admins](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_assignment.rol](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_user_assigned_identity.mi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
-| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
+The following resources are used by this module:
 
-## Inputs
+- [azurerm_container_registry.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
+- [azurerm_container_registry_agent_pool.pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
+- [azurerm_container_registry_cache_rule.cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
+- [azurerm_container_registry_scope_map.scope](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) (resource)
+- [azurerm_container_registry_token.token](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) (resource)
+- [azurerm_container_registry_token_password.password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) (resource)
+- [azurerm_container_registry_webhook.webhook](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) (resource)
+- [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) (resource)
+- [azurerm_role_assignment.admins](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_role_assignment.encryption](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_location"></a> [location](#input\_location) | default azure region to be used. | `string` | `null` | no |
-| <a name="input_naming"></a> [naming](#input\_naming) | contains naming related configuration | `map(string)` | `{}` | no |
-| <a name="input_registry"></a> [registry](#input\_registry) | contains container registry related configuration | `any` | n/a | yes |
-| <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group) | default resource group to be used. | `string` | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | tags to be added to the resources | `map(string)` | `{}` | no |
+## Required Inputs
+
+The following input variables are required:
+
+### <a name="input_registry"></a> [registry](#input\_registry)
+
+Description: contains container registry related configuration
+
+Type:
+
+```hcl
+object({
+    name                          = string
+    resource_group_name           = optional(string)
+    location                      = optional(string)
+    sku                           = optional(string, "Standard")
+    admin_enabled                 = optional(bool, false)
+    quarantine_policy_enabled     = optional(bool, false)
+    network_rule_bypass_option    = optional(string, "AzureServices")
+    public_network_access_enabled = optional(bool, true)
+    zone_redundancy_enabled       = optional(bool, false)
+    anonymous_pull_enabled        = optional(bool, false)
+    export_policy_enabled         = optional(bool, true)
+    data_endpoint_enabled         = optional(bool, false)
+    trust_policy_enabled          = optional(bool, false)
+    retention_policy_in_days      = optional(number, 0)
+    tags                          = optional(map(string))
+    vault                         = optional(string)
+    identity = optional(object({
+      type         = string
+      identity_ids = optional(list(string))
+    }))
+    georeplications = optional(map(object({
+      location                  = string
+      zone_redundancy_enabled   = optional(bool, false)
+      regional_endpoint_enabled = optional(bool, false)
+      tags                      = optional(map(string))
+    })), {})
+    encryption = optional(object({
+      key_vault_key_id   = string
+      identity_client_id = string
+      key_vault_scope    = string
+      principal_id       = string
+    }))
+    network_rule_set = optional(object({
+      default_action = optional(string, "Allow")
+      ip_rules = optional(map(object({
+        ip_range = string
+        action   = optional(string, "Allow")
+      })), {})
+    }))
+    scope_maps = optional(map(object({
+      name         = optional(string)
+      actions      = list(string)
+      description  = optional(string)
+      key_vault_id = optional(string)
+      tokens = optional(map(object({
+        name             = optional(string)
+        secret_name      = optional(string)
+        expiry           = optional(string)
+        not_before_date  = optional(string)
+        content_type     = optional(string)
+        enabled          = optional(bool, true)
+        value_wo_version = optional(string)
+        value_wo         = optional(string)
+        secret = optional(object({
+          password1 = string
+          password2 = string
+        }))
+      })), {})
+    })), {})
+    agentpools = optional(map(object({
+      name                      = optional(string)
+      instances                 = optional(number, 1)
+      tier                      = optional(string, "S2")
+      virtual_network_subnet_id = optional(string)
+      tags                      = optional(map(string))
+    })), {})
+    webhooks = optional(map(object({
+      name           = optional(string)
+      service_uri    = string
+      status         = optional(string, "enabled")
+      scope          = string
+      actions        = list(string)
+      custom_headers = optional(map(string))
+      tags           = optional(map(string))
+    })), {})
+    cache_rules = optional(map(object({
+      name              = optional(string)
+      target_repo       = string
+      source_repo       = string
+      credential_set_id = optional(string)
+    })), {})
+  })
+```
+
+## Optional Inputs
+
+The following input variables are optional (have default values):
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: default azure region to be used.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_naming"></a> [naming](#input\_naming)
+
+Description: contains naming related configuration
+
+Type: `map(string)`
+
+Default: `{}`
+
+### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+
+Description: default resource group to be used.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_tags"></a> [tags](#input\_tags)
+
+Description: tags to be added to the resources
+
+Type: `map(string)`
+
+Default: `{}`
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_agentpools"></a> [agentpools](#output\_agentpools) | contains the agent pools |
-| <a name="output_registry"></a> [registry](#output\_registry) | contains container registry related configuration |
+The following outputs are exported:
+
+### <a name="output_agentpools"></a> [agentpools](#output\_agentpools)
+
+Description: contains the agent pools
+
+### <a name="output_registry"></a> [registry](#output\_registry)
+
+Description: contains container registry related configuration
 <!-- END_TF_DOCS -->
 
 ## Testing
@@ -101,15 +220,15 @@ Full examples detailing all usages, along with integrations with dependency modu
 
 To update the module's documentation run `make doc`
 
-## Authors
-
-Module is maintained by [these awesome contributors](https://github.com/cloudnationhq/terraform-azure-acr/graphs/contributors).
-
-## Contributing
+## Contributors
 
 We welcome contributions from the community! Whether it's reporting a bug, suggesting a new feature, or submitting a pull request, your input is highly valued.
 
-For more information, please see our contribution [guidelines](./CONTRIBUTING.md).
+For more information, please see our contribution [guidelines](./CONTRIBUTING.md). <br><br>
+
+<a href="https://github.com/cloudnationhq/terraform-azure-acr/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=cloudnationhq/terraform-azure-acr" />
+</a>
 
 ## License
 
