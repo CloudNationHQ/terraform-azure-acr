@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v4.2.0...v5.0.0) (2025-08-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* this change causes recreates
+
+### Features
+
+* small refactor and changed data structure ([#95](https://github.com/CloudNationHQ/terraform-azure-acr/issues/95)) ([d33f851](https://github.com/CloudNationHQ/terraform-azure-acr/commit/d33f8515cff2d1376ed95bf8f09c32413f43536f))
+
 ## [4.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v4.1.0...v4.2.0) (2025-02-25)
 
 
