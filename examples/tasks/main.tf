@@ -1,6 +1,6 @@
 module "naming" {
   source  = "cloudnationhq/naming/azure"
-  version = "~> 0.22"
+  version = "~> 0.26"
 
   suffix = ["demo", "dev"]
 }
@@ -47,10 +47,10 @@ module "tasks" {
 
       encoded_step = {
         task_content = base64encode(<<EOF
-version: v1.1.0
-steps:
-  - cmd: docker run --rm alpine:latest /bin/sh -c "echo 'Hello, World!'"
-EOF
+        version: v1.1.0
+        steps:
+        - cmd: docker run --rm alpine:latest /bin/sh -c "echo 'Hello, World!'"
+        EOF
         )
       }
       timer_triggers = {
