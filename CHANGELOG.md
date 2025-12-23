@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.0.0...v5.1.0) (2025-12-23)
+
+
+### Features
+
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#100](https://github.com/CloudNationHQ/terraform-azure-acr/issues/100)) ([78f0bed](https://github.com/CloudNationHQ/terraform-azure-acr/commit/78f0bed42c68b10ecef7b2192f3ae4548968b0fc))
+* **deps:** bump github.com/ulikunitz/xz from 0.5.10 to 0.5.14 in /tests ([#97](https://github.com/CloudNationHQ/terraform-azure-acr/issues/97)) ([9cbaf98](https://github.com/CloudNationHQ/terraform-azure-acr/commit/9cbaf9856d5966d9432972e17e527e55a3377387))
+* **deps:** bump golang.org/x/crypto from 0.36.0 to 0.45.0 in /tests ([#101](https://github.com/CloudNationHQ/terraform-azure-acr/issues/101)) ([32daccd](https://github.com/CloudNationHQ/terraform-azure-acr/commit/32daccdabf45c32841bd26709466b7518b81d092))
+* increment version all module usages ([#104](https://github.com/CloudNationHQ/terraform-azure-acr/issues/104)) ([66f9c7e](https://github.com/CloudNationHQ/terraform-azure-acr/commit/66f9c7e72e7d98f41b4eef4c65b039f6c3d1077d))
+
 ## [5.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v4.2.0...v5.0.0) (2025-08-27)
 
 
