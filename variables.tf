@@ -82,6 +82,25 @@ variable "registry" {
       source_repo       = string
       credential_set_id = optional(string)
     })), {})
+    connected_registries = optional(map(object({
+      name               = optional(string)
+      sync_token_id      = optional(string)
+      sync_token         = optional(string)
+      audit_log_enabled  = optional(bool, false)
+      client_token_ids   = optional(list(string))
+      log_level          = optional(string, "None")
+      mode               = optional(string, "ReadWrite")
+      parent_registry_id = optional(string)
+      sync_message_ttl   = optional(string, "P1D")
+      sync_schedule      = optional(string, "* * * * *")
+      sync_window        = optional(string)
+      notifications = optional(map(object({
+        name   = string
+        action = string
+        tag    = optional(string)
+        digest = optional(string)
+      })), {})
+    })), {})
   })
 
   validation {
@@ -112,6 +131,24 @@ variable "registry" {
   validation {
     condition     = var.registry.retention_policy_in_days >= 0 && var.registry.retention_policy_in_days <= 365
     error_message = "Retention policy must be between 0 and 365 days."
+  }
+
+  validation {
+    condition     = var.registry.sku == "Premium" || length(var.registry.connected_registries) == 0
+    error_message = "Connected registries are only supported with Premium SKU."
+  }
+
+  validation {
+    condition     = length(var.registry.connected_registries) == 0 || var.registry.data_endpoint_enabled
+    error_message = "Connected registries require data_endpoint_enabled = true."
+  }
+
+  validation {
+    condition = alltrue([
+      for k, v in var.registry.connected_registries :
+      v.sync_token_id != null || v.sync_token != null
+    ])
+    error_message = "Each connected registry must specify either sync_token_id or sync_token_key."
   }
 }
 
