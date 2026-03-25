@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.2.0...v5.3.0) (2026-03-25)
+
+
+### Features
+
+* add build task example for nginx deployment to Azure Container Registry ([#114](https://github.com/CloudNationHQ/terraform-azure-acr/issues/114)) ([59c88cd](https://github.com/CloudNationHQ/terraform-azure-acr/commit/59c88cd6eab76728b5a0ae2a59ad6327067e18d9))
+* add support for connected registries with synchronization capabilities ([#113](https://github.com/CloudNationHQ/terraform-azure-acr/issues/113)) ([9a9b76f](https://github.com/CloudNationHQ/terraform-azure-acr/commit/9a9b76f6d1bf2694877b029b4420791a1db37244))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#111](https://github.com/CloudNationHQ/terraform-azure-acr/issues/111)) ([b9ddffa](https://github.com/CloudNationHQ/terraform-azure-acr/commit/b9ddffa4cd95d9f7d24834e9de40612a90da186f))
+
 ## [5.2.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.1.0...v5.2.0) (2026-03-02)
 
 
