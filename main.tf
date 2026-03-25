@@ -274,6 +274,36 @@ resource "azurerm_container_registry_cache_rule" "cache" {
   credential_set_id     = each.value.credential_set_id
 }
 
+# connected registries
+resource "azurerm_container_connected_registry" "connected" {
+  for_each = var.registry.connected_registries
+
+  name                  = coalesce(each.value.name, each.key)
+  container_registry_id = azurerm_container_registry.acr.id
+  sync_token_id         = each.value.sync_token_id != null ? each.value.sync_token_id : azurerm_container_registry_token.token[each.value.sync_token].id
+  audit_log_enabled     = each.value.audit_log_enabled
+  client_token_ids      = each.value.client_token_ids
+  log_level             = each.value.log_level
+  mode                  = each.value.mode
+  parent_registry_id    = each.value.parent_registry_id
+  sync_message_ttl      = each.value.sync_message_ttl
+  sync_schedule         = each.value.sync_schedule
+  sync_window           = each.value.sync_window
+
+  dynamic "notification" {
+    for_each = each.value.notifications
+
+    content {
+      name   = notification.value.name
+      action = notification.value.action
+      tag    = notification.value.tag
+      digest = notification.value.digest
+    }
+  }
+
+  depends_on = [azurerm_container_registry_token_password.password]
+}
+
 # role assignments
 resource "azurerm_role_assignment" "encryption" {
   for_each = var.registry.encryption != null ? { "encryption" = var.registry.encryption } : {}
@@ -284,7 +314,10 @@ resource "azurerm_role_assignment" "encryption" {
 }
 
 resource "azurerm_role_assignment" "admins" {
-  for_each = var.registry.scope_maps
+  for_each = {
+    for k, v in var.registry.scope_maps : k => v
+    if try(coalesce(v.key_vault_id, var.registry.vault), null) != null
+  }
 
   scope                = coalesce(each.value.key_vault_id, var.registry.vault)
   role_definition_name = "Key Vault Secrets Officer"
