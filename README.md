@@ -24,6 +24,8 @@ Webhook support enables automated notifications and integrations
 
 Custom cache rules optimize container image delivery
 
+Connected registries enable edge and on-premises scenarios with synchronization support
+
 Immediate task execution is supported through run-now capability
 
 Platform settings allow customized architecture and OS configurations
@@ -51,6 +53,7 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
+- [azurerm_container_connected_registry.connected](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_connected_registry) (resource)
 - [azurerm_container_registry.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
 - [azurerm_container_registry_agent_pool.pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
 - [azurerm_container_registry_cache_rule.cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
@@ -156,6 +159,25 @@ object({
       source_repo       = string
       credential_set_id = optional(string)
     })), {})
+    connected_registries = optional(map(object({
+      name               = optional(string)
+      sync_token_id      = optional(string)
+      sync_token         = optional(string)
+      audit_log_enabled  = optional(bool, false)
+      client_token_ids   = optional(list(string))
+      log_level          = optional(string, "None")
+      mode               = optional(string, "ReadWrite")
+      parent_registry_id = optional(string)
+      sync_message_ttl   = optional(string, "P1D")
+      sync_schedule      = optional(string, "* * * * *")
+      sync_window        = optional(string)
+      notifications = optional(map(object({
+        name   = string
+        action = string
+        tag    = optional(string)
+        digest = optional(string)
+      })), {})
+    })), {})
   })
 ```
 
@@ -202,6 +224,10 @@ The following outputs are exported:
 ### <a name="output_agentpools"></a> [agentpools](#output\_agentpools)
 
 Description: contains the agent pools
+
+### <a name="output_connected_registries"></a> [connected\_registries](#output\_connected\_registries)
+
+Description: contains the connected registries
 
 ### <a name="output_registry"></a> [registry](#output\_registry)
 
