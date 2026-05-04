@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.3.0...v5.4.0) (2026-05-04)
+
+
+### Features
+
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#115](https://github.com/CloudNationHQ/terraform-azure-acr/issues/115)) ([1390bba](https://github.com/CloudNationHQ/terraform-azure-acr/commit/1390bba61e43e536e8004eca45e033a53eb1f222))
+
 ## [5.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.2.0...v5.3.0) (2026-03-25)
 
 
