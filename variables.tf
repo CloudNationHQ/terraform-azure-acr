@@ -8,12 +8,11 @@ variable "registry" {
     admin_enabled                 = optional(bool, false)
     quarantine_policy_enabled     = optional(bool, false)
     network_rule_bypass_option    = optional(string, "AzureServices")
-    public_network_access_enabled = optional(bool, true)
+    public_network_access_enabled = optional(bool)
     zone_redundancy_enabled       = optional(bool, false)
     anonymous_pull_enabled        = optional(bool, false)
-    export_policy_enabled         = optional(bool, true)
+    export_policy_enabled         = optional(bool)
     data_endpoint_enabled         = optional(bool, false)
-    trust_policy_enabled          = optional(bool, false)
     retention_policy_in_days      = optional(number, 0)
     tags                          = optional(map(string))
     vault                         = optional(string)
@@ -22,10 +21,10 @@ variable "registry" {
       identity_ids = optional(list(string))
     }))
     georeplications = optional(map(object({
-      location                  = string
-      zone_redundancy_enabled   = optional(bool, false)
-      regional_endpoint_enabled = optional(bool, false)
-      tags                      = optional(map(string))
+      location                        = string
+      zone_redundancy_enabled         = optional(bool, false)
+      global_endpoint_routing_enabled = optional(bool, false)
+      tags                            = optional(map(string))
     })), {})
     encryption = optional(object({
       key_vault_key_id   = string
@@ -51,7 +50,7 @@ variable "registry" {
         expiry           = optional(string)
         not_before_date  = optional(string)
         content_type     = optional(string)
-        enabled          = optional(bool, true)
+        enabled          = optional(bool)
         value_wo_version = optional(string)
         value_wo         = optional(string)
         secret = optional(object({
@@ -104,6 +103,16 @@ variable "registry" {
   })
 
   validation {
+    condition     = lookup(var.registry, "location", null) != null || var.location != null
+    error_message = "location must be set on var.registry.location or on the module-level var.location."
+  }
+
+  validation {
+    condition     = lookup(var.registry, "resource_group_name", null) != null || var.resource_group_name != null
+    error_message = "resource_group_name must be set on var.registry.resource_group_name or on the module-level var.resource_group_name."
+  }
+
+  validation {
     condition     = var.registry.sku == "Premium" || length(lookup(var.registry, "georeplications", {})) == 0
     error_message = "Georeplications are only supported with Premium SKU."
   }
@@ -121,11 +130,6 @@ variable "registry" {
   validation {
     condition     = var.registry.sku != "Basic" || var.registry.retention_policy_in_days == 0
     error_message = "Retention policy is not supported with Basic SKU."
-  }
-
-  validation {
-    condition     = var.registry.sku != "Basic" || !var.registry.trust_policy_enabled
-    error_message = "Trust policy is not supported with Basic SKU."
   }
 
   validation {
@@ -150,12 +154,6 @@ variable "registry" {
     ])
     error_message = "Each connected registry must specify either sync_token_id or sync_token_key."
   }
-}
-
-variable "naming" {
-  description = "contains naming related configuration"
-  type        = map(string)
-  default     = {}
 }
 
 variable "location" {

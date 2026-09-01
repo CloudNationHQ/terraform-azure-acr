@@ -7,7 +7,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   groups = {
     demo = {
@@ -19,14 +19,13 @@ module "rg" {
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 4.0"
-
-  naming = local.naming
+  version = "~> 6.0"
 
   vault = {
-    name                = module.naming.key_vault.name_unique
-    location            = module.rg.groups.demo.location
-    resource_group_name = module.rg.groups.demo.name
+    name                     = module.naming.key_vault.name_unique
+    location                 = module.rg.groups.demo.location
+    resource_group_name      = module.rg.groups.demo.name
+    purge_protection_enabled = true
 
     keys = {
       demo = {
@@ -45,9 +44,9 @@ module "kv" {
 
 module "identity" {
   source  = "cloudnationhq/uai/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
-  config = {
+  identity = {
     name                = module.naming.user_assigned_identity.name
     location            = module.rg.groups.demo.location
     resource_group_name = module.rg.groups.demo.name
@@ -56,9 +55,7 @@ module "identity" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 5.0"
-
-  naming = local.naming
+  version = "~> 6.0"
 
   registry = {
     name                = module.naming.container_registry.name_unique
@@ -68,14 +65,14 @@ module "acr" {
 
     identity = {
       type         = "UserAssigned"
-      identity_ids = [module.identity.config.id]
+      identity_ids = [module.identity.identity.id]
     }
 
     encryption = {
       key_vault_key_id   = module.kv.keys.demo.id
-      identity_client_id = module.identity.config.client_id
+      identity_client_id = module.identity.identity.client_id
       key_vault_scope    = module.kv.vault.id
-      principal_id       = module.identity.config.principal_id
+      principal_id       = module.identity.identity.principal_id
     }
   }
 }

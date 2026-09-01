@@ -41,27 +41,27 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_container_connected_registry.connected](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_connected_registry) (resource)
-- [azurerm_container_registry.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
-- [azurerm_container_registry_agent_pool.pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
-- [azurerm_container_registry_cache_rule.cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
-- [azurerm_container_registry_scope_map.scope](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) (resource)
-- [azurerm_container_registry_token.token](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) (resource)
-- [azurerm_container_registry_token_password.password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) (resource)
-- [azurerm_container_registry_webhook.webhook](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) (resource)
-- [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) (resource)
+- [azurerm_container_connected_registry.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_connected_registry) (resource)
+- [azurerm_container_registry.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
+- [azurerm_container_registry_agent_pool.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
+- [azurerm_container_registry_cache_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
+- [azurerm_container_registry_scope_map.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) (resource)
+- [azurerm_container_registry_token.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) (resource)
+- [azurerm_container_registry_token_password.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) (resource)
+- [azurerm_container_registry_webhook.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) (resource)
+- [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) (resource)
 - [azurerm_role_assignment.admins](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.encryption](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
@@ -85,12 +85,11 @@ object({
     admin_enabled                 = optional(bool, false)
     quarantine_policy_enabled     = optional(bool, false)
     network_rule_bypass_option    = optional(string, "AzureServices")
-    public_network_access_enabled = optional(bool, true)
+    public_network_access_enabled = optional(bool)
     zone_redundancy_enabled       = optional(bool, false)
     anonymous_pull_enabled        = optional(bool, false)
-    export_policy_enabled         = optional(bool, true)
+    export_policy_enabled         = optional(bool)
     data_endpoint_enabled         = optional(bool, false)
-    trust_policy_enabled          = optional(bool, false)
     retention_policy_in_days      = optional(number, 0)
     tags                          = optional(map(string))
     vault                         = optional(string)
@@ -99,10 +98,10 @@ object({
       identity_ids = optional(list(string))
     }))
     georeplications = optional(map(object({
-      location                  = string
-      zone_redundancy_enabled   = optional(bool, false)
-      regional_endpoint_enabled = optional(bool, false)
-      tags                      = optional(map(string))
+      location                        = string
+      zone_redundancy_enabled         = optional(bool, false)
+      global_endpoint_routing_enabled = optional(bool, false)
+      tags                            = optional(map(string))
     })), {})
     encryption = optional(object({
       key_vault_key_id   = string
@@ -128,7 +127,7 @@ object({
         expiry           = optional(string)
         not_before_date  = optional(string)
         content_type     = optional(string)
-        enabled          = optional(bool, true)
+        enabled          = optional(bool)
         value_wo_version = optional(string)
         value_wo         = optional(string)
         secret = optional(object({
@@ -192,14 +191,6 @@ Description: default azure region to be used.
 Type: `string`
 
 Default: `null`
-
-### <a name="input_naming"></a> [naming](#input\_naming)
-
-Description: contains naming related configuration
-
-Type: `map(string)`
-
-Default: `{}`
 
 ### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 

@@ -7,7 +7,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   groups = {
     demo = {
@@ -19,7 +19,7 @@ module "rg" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
   registry = {
     name                = module.naming.container_registry.name_unique
@@ -31,7 +31,7 @@ module "acr" {
 
 module "tasks" {
   source  = "cloudnationhq/acr/azure//modules/tasks"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
   tasks = {
     build_nginx = {

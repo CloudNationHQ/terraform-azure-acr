@@ -6,7 +6,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   groups = {
     demo = {
@@ -18,9 +18,7 @@ module "rg" {
 
 module "kv" {
   source  = "cloudnationhq/kv/azure"
-  version = "~> 4.0"
-
-  naming = local.naming
+  version = "~> 6.0"
 
   vault = {
     name                = module.naming.key_vault.name_unique
@@ -32,12 +30,12 @@ module "kv" {
         token2-1 = {
           length          = 24
           special         = false
-          expiration_date = "2026-08-22T17:57:36+08:00"
+          expiration_date = "2027-08-22T17:57:36+08:00"
         }
         token2-2 = {
           length          = 24
           special         = false
-          expiration_date = "2026-08-22T17:57:36+08:00"
+          expiration_date = "2027-08-22T17:57:36+08:00"
         }
       }
     }
@@ -46,9 +44,7 @@ module "kv" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 5.0"
-
-  naming = local.naming
+  version = "~> 6.0"
 
   registry = {
     name                = module.naming.container_registry.name_unique
@@ -66,11 +62,11 @@ module "acr" {
         tokens = {
           token1 = {
             # generated from module
-            expiry = "2026-02-22T17:57:36+08:00"
+            expiry = "2027-02-22T17:57:36+08:00"
           }
           token2 = {
             # generated outside module
-            expiry = "2026-08-22T17:57:36+08:00"
+            expiry = "2027-08-22T17:57:36+08:00"
             secret = {
               password1 = module.kv.secrets.token2-1.value
               password2 = module.kv.secrets.token2-2.value
