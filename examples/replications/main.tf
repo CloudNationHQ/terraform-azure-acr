@@ -29,10 +29,12 @@ module "acr" {
 
     georeplications = {
       sea = {
-        location = "southeastasia"
+        location                        = "southeastasia"
+        global_endpoint_routing_enabled = false
       }
       eus = {
-        location = "eastus"
+        location                        = "eastus"
+        global_endpoint_routing_enabled = false
       }
       eus2 = {
         location                        = "eastus2"

@@ -81,16 +81,16 @@ object({
     name                          = string
     resource_group_name           = optional(string)
     location                      = optional(string)
-    sku                           = optional(string, "Standard")
-    admin_enabled                 = optional(bool, false)
-    quarantine_policy_enabled     = optional(bool, false)
-    network_rule_bypass_option    = optional(string, "AzureServices")
+    sku                           = string
+    admin_enabled                 = optional(bool)
+    quarantine_policy_enabled     = optional(bool)
+    network_rule_bypass_option    = optional(string)
     public_network_access_enabled = optional(bool)
-    zone_redundancy_enabled       = optional(bool, false)
-    anonymous_pull_enabled        = optional(bool, false)
+    zone_redundancy_enabled       = optional(bool)
+    anonymous_pull_enabled        = optional(bool)
     export_policy_enabled         = optional(bool)
-    data_endpoint_enabled         = optional(bool, false)
-    retention_policy_in_days      = optional(number, 0)
+    data_endpoint_enabled         = optional(bool)
+    retention_policy_in_days      = optional(number)
     tags                          = optional(map(string))
     vault                         = optional(string)
     identity = optional(object({
@@ -99,8 +99,8 @@ object({
     }))
     georeplications = optional(map(object({
       location                        = string
-      zone_redundancy_enabled         = optional(bool, false)
-      global_endpoint_routing_enabled = optional(bool, false)
+      zone_redundancy_enabled         = optional(bool)
+      global_endpoint_routing_enabled = bool
       tags                            = optional(map(string))
     })), {})
     encryption = optional(object({
@@ -110,7 +110,7 @@ object({
       principal_id       = string
     }))
     network_rule_set = optional(object({
-      default_action = optional(string, "Allow")
+      default_action = optional(string)
       ip_rules = optional(map(object({
         ip_range = string
         action   = optional(string, "Allow")
@@ -138,15 +138,15 @@ object({
     })), {})
     agentpools = optional(map(object({
       name                      = optional(string)
-      instances                 = optional(number, 1)
-      tier                      = optional(string, "S2")
+      instances                 = optional(number)
+      tier                      = optional(string)
       virtual_network_subnet_id = optional(string)
       tags                      = optional(map(string))
     })), {})
     webhooks = optional(map(object({
       name           = optional(string)
       service_uri    = string
-      status         = optional(string, "enabled")
+      status         = optional(string)
       scope          = string
       actions        = list(string)
       custom_headers = optional(map(string))
@@ -162,13 +162,13 @@ object({
       name               = optional(string)
       sync_token_id      = optional(string)
       sync_token         = optional(string)
-      audit_log_enabled  = optional(bool, false)
+      audit_log_enabled  = optional(bool)
       client_token_ids   = optional(list(string))
-      log_level          = optional(string, "None")
-      mode               = optional(string, "ReadWrite")
+      log_level          = optional(string)
+      mode               = optional(string)
       parent_registry_id = optional(string)
-      sync_message_ttl   = optional(string, "P1D")
-      sync_schedule      = optional(string, "* * * * *")
+      sync_message_ttl   = optional(string)
+      sync_schedule      = optional(string)
       sync_window        = optional(string)
       notifications = optional(map(object({
         name   = string
