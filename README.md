@@ -41,27 +41,27 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azurerm_container_connected_registry.connected](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_connected_registry) (resource)
-- [azurerm_container_registry.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
-- [azurerm_container_registry_agent_pool.pools](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
-- [azurerm_container_registry_cache_rule.cache](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
-- [azurerm_container_registry_scope_map.scope](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) (resource)
-- [azurerm_container_registry_token.token](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) (resource)
-- [azurerm_container_registry_token_password.password](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) (resource)
-- [azurerm_container_registry_webhook.webhook](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) (resource)
-- [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) (resource)
+- [azurerm_container_connected_registry.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_connected_registry) (resource)
+- [azurerm_container_registry.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry) (resource)
+- [azurerm_container_registry_agent_pool.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) (resource)
+- [azurerm_container_registry_cache_rule.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_cache_rule) (resource)
+- [azurerm_container_registry_scope_map.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) (resource)
+- [azurerm_container_registry_token.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token) (resource)
+- [azurerm_container_registry_token_password.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_token_password) (resource)
+- [azurerm_container_registry_webhook.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) (resource)
+- [azurerm_key_vault_secret.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) (resource)
 - [azurerm_role_assignment.admins](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.encryption](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
@@ -78,57 +78,61 @@ Type:
 
 ```hcl
 object({
-    name                          = string
-    resource_group_name           = optional(string)
-    location                      = optional(string)
-    sku                           = optional(string, "Standard")
-    admin_enabled                 = optional(bool, false)
-    quarantine_policy_enabled     = optional(bool, false)
-    network_rule_bypass_option    = optional(string, "AzureServices")
-    public_network_access_enabled = optional(bool, true)
-    zone_redundancy_enabled       = optional(bool, false)
-    anonymous_pull_enabled        = optional(bool, false)
-    export_policy_enabled         = optional(bool, true)
-    data_endpoint_enabled         = optional(bool, false)
-    trust_policy_enabled          = optional(bool, false)
-    retention_policy_in_days      = optional(number, 0)
-    tags                          = optional(map(string))
-    vault                         = optional(string)
+    name                                         = string
+    resource_group_name                          = optional(string)
+    location                                     = optional(string)
+    sku                                          = string
+    admin_enabled                                = optional(bool)
+    quarantine_policy_enabled                    = optional(bool)
+    network_rule_bypass_option                   = optional(string)
+    public_network_access_enabled                = optional(bool)
+    zone_redundancy_enabled                      = optional(bool)
+    anonymous_pull_enabled                       = optional(bool)
+    export_policy_enabled                        = optional(bool)
+    data_endpoint_enabled                        = optional(bool)
+    retention_policy_in_days                     = optional(number)
+    azuread_authentication_as_arm_policy_enabled = optional(bool)
+    network_rule_bypass_for_tasks_enabled        = optional(bool)
+    role_assignment_mode                         = optional(string)
+    tags                                         = optional(map(string))
+    vault                                        = optional(string)
     identity = optional(object({
       type         = string
       identity_ids = optional(list(string))
     }))
     georeplications = optional(map(object({
-      location                  = string
-      zone_redundancy_enabled   = optional(bool, false)
-      regional_endpoint_enabled = optional(bool, false)
-      tags                      = optional(map(string))
+      location                        = string
+      zone_redundancy_enabled         = optional(bool)
+      global_endpoint_routing_enabled = bool
+      tags                            = optional(map(string))
     })), {})
     encryption = optional(object({
-      key_vault_key_id   = string
-      identity_client_id = string
-      key_vault_scope    = string
-      principal_id       = string
+      key_vault_key_id     = string
+      identity_client_id   = string
+      key_vault_scope      = string
+      principal_id         = string
+      role_definition_name = optional(string, "Key Vault Crypto Officer")
     }))
     network_rule_set = optional(object({
-      default_action = optional(string, "Allow")
+      default_action = optional(string)
       ip_rules = optional(map(object({
         ip_range = string
         action   = optional(string, "Allow")
       })), {})
     }))
     scope_maps = optional(map(object({
-      name         = optional(string)
-      actions      = list(string)
-      description  = optional(string)
-      key_vault_id = optional(string)
+      name                 = optional(string)
+      actions              = list(string)
+      description          = optional(string)
+      key_vault_id         = optional(string)
+      role_definition_name = optional(string, "Key Vault Secrets Officer")
       tokens = optional(map(object({
         name             = optional(string)
         secret_name      = optional(string)
         expiry           = optional(string)
         not_before_date  = optional(string)
         content_type     = optional(string)
-        enabled          = optional(bool, true)
+        enabled          = optional(bool)
         value_wo_version = optional(string)
         value_wo         = optional(string)
         secret = optional(object({
@@ -139,15 +143,15 @@ object({
     })), {})
     agentpools = optional(map(object({
       name                      = optional(string)
-      instances                 = optional(number, 1)
-      tier                      = optional(string, "S2")
+      instances                 = optional(number)
+      tier                      = optional(string)
       virtual_network_subnet_id = optional(string)
       tags                      = optional(map(string))
     })), {})
     webhooks = optional(map(object({
       name           = optional(string)
       service_uri    = string
-      status         = optional(string, "enabled")
+      status         = optional(string)
       scope          = string
       actions        = list(string)
       custom_headers = optional(map(string))
@@ -163,13 +167,13 @@ object({
       name               = optional(string)
       sync_token_id      = optional(string)
       sync_token         = optional(string)
-      audit_log_enabled  = optional(bool, false)
+      audit_log_enabled  = optional(bool)
       client_token_ids   = optional(list(string))
-      log_level          = optional(string, "None")
-      mode               = optional(string, "ReadWrite")
+      log_level          = optional(string)
+      mode               = optional(string)
       parent_registry_id = optional(string)
-      sync_message_ttl   = optional(string, "P1D")
-      sync_schedule      = optional(string, "* * * * *")
+      sync_message_ttl   = optional(string)
+      sync_schedule      = optional(string)
       sync_window        = optional(string)
       notifications = optional(map(object({
         name   = string
@@ -192,14 +196,6 @@ Description: default azure region to be used.
 Type: `string`
 
 Default: `null`
-
-### <a name="input_naming"></a> [naming](#input\_naming)
-
-Description: contains naming related configuration
-
-Type: `map(string)`
-
-Default: `{}`
 
 ### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
@@ -254,11 +250,7 @@ To update the module's documentation run `make doc`
 
 We welcome contributions from the community! Whether it's reporting a bug, suggesting a new feature, or submitting a pull request, your input is highly valued.
 
-For more information, please see our contribution [guidelines](./CONTRIBUTING.md). <br><br>
-
-<a href="https://github.com/cloudnationhq/terraform-azure-acr/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=cloudnationhq/terraform-azure-acr" />
-</a>
+For more information, please see our contribution [guidelines](./CONTRIBUTING.md).
 
 ## License
 
@@ -268,4 +260,3 @@ MIT Licensed. See [LICENSE](./LICENSE) for full details.
 
 - [Documentation](https://learn.microsoft.com/en-us/azure/container-registry/)
 - [Rest Api](https://learn.microsoft.com/en-us/rest/api/containerregistry/)
-- [Rest Api Specs](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/containerregistry)

@@ -7,7 +7,7 @@ module "naming" {
 
 module "rg" {
   source  = "cloudnationhq/rg/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   groups = {
     demo = {
@@ -19,7 +19,7 @@ module "rg" {
 
 module "acr" {
   source  = "cloudnationhq/acr/azure"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
   registry = {
     name                = module.naming.container_registry.name_unique
@@ -29,14 +29,16 @@ module "acr" {
 
     georeplications = {
       sea = {
-        location = "southeastasia"
+        location                        = "southeastasia"
+        global_endpoint_routing_enabled = false
       }
       eus = {
-        location = "eastus"
+        location                        = "eastus"
+        global_endpoint_routing_enabled = false
       }
       eus2 = {
-        location                  = "eastus2"
-        regional_endpoint_enabled = true
+        location                        = "eastus2"
+        global_endpoint_routing_enabled = true
       }
     }
   }

@@ -1,38 +1,36 @@
 data "azurerm_client_config" "current" {}
 
 # container registry
-resource "azurerm_container_registry" "acr" {
+resource "azurerm_container_registry" "this" {
   resource_group_name = coalesce(
-    lookup(
-      var.registry, "resource_group_name", null
-    ), var.resource_group_name
+    var.registry.resource_group_name, var.resource_group_name
   )
 
   location = coalesce(
-    lookup(
-      var.registry, "location", null
-    ), var.location
+    var.registry.location, var.location
   )
-
-  name                          = var.registry.name
-  sku                           = var.registry.sku
-  admin_enabled                 = var.registry.admin_enabled
-  quarantine_policy_enabled     = var.registry.quarantine_policy_enabled
-  network_rule_bypass_option    = var.registry.network_rule_bypass_option
-  public_network_access_enabled = var.registry.public_network_access_enabled
-  zone_redundancy_enabled       = var.registry.zone_redundancy_enabled
-  anonymous_pull_enabled        = var.registry.anonymous_pull_enabled
-  export_policy_enabled         = var.registry.export_policy_enabled
-  data_endpoint_enabled         = var.registry.data_endpoint_enabled
-  trust_policy_enabled          = var.registry.trust_policy_enabled
-  retention_policy_in_days      = var.registry.retention_policy_in_days
 
   tags = coalesce(
     var.registry.tags, var.tags
   )
 
+  name                                         = var.registry.name
+  sku                                          = var.registry.sku
+  admin_enabled                                = var.registry.admin_enabled
+  quarantine_policy_enabled                    = var.registry.quarantine_policy_enabled
+  network_rule_bypass_option                   = var.registry.network_rule_bypass_option
+  public_network_access_enabled                = var.registry.public_network_access_enabled
+  zone_redundancy_enabled                      = var.registry.zone_redundancy_enabled
+  azuread_authentication_as_arm_policy_enabled = var.registry.azuread_authentication_as_arm_policy_enabled
+  network_rule_bypass_for_tasks_enabled        = var.registry.network_rule_bypass_for_tasks_enabled
+  role_assignment_mode                         = var.registry.role_assignment_mode
+  anonymous_pull_enabled                       = var.registry.anonymous_pull_enabled
+  export_policy_enabled                        = var.registry.export_policy_enabled
+  data_endpoint_enabled                        = var.registry.data_endpoint_enabled
+  retention_policy_in_days                     = var.registry.retention_policy_in_days
+
   dynamic "identity" {
-    for_each = var.registry.identity != null ? [var.registry.identity] : []
+    for_each = var.registry.identity != null ? { "this" = var.registry.identity } : {}
 
     content {
       type         = identity.value.type
@@ -44,9 +42,9 @@ resource "azurerm_container_registry" "acr" {
     for_each = var.registry.georeplications
 
     content {
-      location                  = georeplications.value.location
-      zone_redundancy_enabled   = georeplications.value.zone_redundancy_enabled
-      regional_endpoint_enabled = georeplications.value.regional_endpoint_enabled
+      location                        = georeplications.value.location
+      zone_redundancy_enabled         = georeplications.value.zone_redundancy_enabled
+      global_endpoint_routing_enabled = georeplications.value.global_endpoint_routing_enabled
 
       tags = coalesce(
         georeplications.value.tags, var.tags
@@ -55,7 +53,7 @@ resource "azurerm_container_registry" "acr" {
   }
 
   dynamic "encryption" {
-    for_each = var.registry.encryption != null ? { "default" : var.registry.encryption } : {}
+    for_each = var.registry.encryption != null ? { "this" = var.registry.encryption } : {}
 
     content {
       key_vault_key_id   = encryption.value.key_vault_key_id
@@ -64,7 +62,7 @@ resource "azurerm_container_registry" "acr" {
   }
 
   dynamic "network_rule_set" {
-    for_each = var.registry.network_rule_set != null ? [var.registry.network_rule_set] : []
+    for_each = var.registry.network_rule_set != null ? { "this" = var.registry.network_rule_set } : {}
 
     content {
       default_action = network_rule_set.value.default_action
@@ -85,26 +83,24 @@ resource "azurerm_container_registry" "acr" {
 }
 
 # scope maps
-resource "azurerm_container_registry_scope_map" "scope" {
+resource "azurerm_container_registry_scope_map" "this" {
   for_each = var.registry.scope_maps
 
   resource_group_name = coalesce(
-    lookup(
-      var.registry, "resource_group_name", null
-    ), var.resource_group_name
+    var.registry.resource_group_name, var.resource_group_name
   )
 
   name = coalesce(
     each.value.name, "scope-${each.key}"
   )
 
-  container_registry_name = azurerm_container_registry.acr.name
+  container_registry_name = azurerm_container_registry.this.name
   actions                 = each.value.actions
   description             = each.value.description
 }
 
 # tokens
-resource "azurerm_container_registry_token" "token" {
+resource "azurerm_container_registry_token" "this" {
   for_each = merge([
     for scope_key, scope in var.registry.scope_maps : {
       for token_key, token in scope.tokens :
@@ -117,22 +113,20 @@ resource "azurerm_container_registry_token" "token" {
   ]...)
 
   resource_group_name = coalesce(
-    lookup(
-      var.registry, "resource_group_name", null
-    ), var.resource_group_name
+    var.registry.resource_group_name, var.resource_group_name
   )
 
   name = coalesce(
     each.value.token.name, "token-${each.value.scope_key}-${each.value.token_key}"
   )
 
-  container_registry_name = azurerm_container_registry.acr.name
-  scope_map_id            = azurerm_container_registry_scope_map.scope[each.value.scope_key].id
+  container_registry_name = azurerm_container_registry.this.name
+  scope_map_id            = azurerm_container_registry_scope_map.this[each.value.scope_key].id
   enabled                 = each.value.token.enabled
 }
 
 # token passwords
-resource "azurerm_container_registry_token_password" "password" {
+resource "azurerm_container_registry_token_password" "this" {
   for_each = merge([
     for scope_key, scope in var.registry.scope_maps : {
       for token_key, token in scope.tokens :
@@ -144,7 +138,7 @@ resource "azurerm_container_registry_token_password" "password" {
     }
   ]...)
 
-  container_registry_token_id = azurerm_container_registry_token.token[each.key].id
+  container_registry_token_id = azurerm_container_registry_token.this[each.key].id
 
   password1 {
     expiry = each.value.token.expiry
@@ -155,45 +149,35 @@ resource "azurerm_container_registry_token_password" "password" {
 }
 
 # secrets generated from module
-resource "azurerm_key_vault_secret" "secret" {
-  for_each = {
-    for pair in flatten([
-      for k, v in merge([
-        for scope_key, scope in var.registry.scope_maps : {
-          for token_key, token in scope.tokens :
-          "${scope_key}.${token_key}" => {
-            scope_key = scope_key
-            token_key = token_key
-            token     = token
-          }
-        }
-        ]...) : [
-        {
-          key            = k
-          value          = v
-          password_num   = "1"
-          password_value = azurerm_container_registry_token_password.password[k].password1[0].value
-        },
-        {
-          key            = k
-          value          = v
-          password_num   = "2"
-          password_value = azurerm_container_registry_token_password.password[k].password2[0].value
-        }
-      ] if !contains(keys(v.token), "secret")
-    ]) : "${pair.key}-${pair.password_num}" => pair
-  }
+resource "azurerm_key_vault_secret" "this" {
+  for_each = merge([
+    for scope_key, scope in var.registry.scope_maps : {
+      for pair in setproduct(keys(scope.tokens), ["1", "2"]) :
+      "${scope_key}.${pair[0]}-${pair[1]}" => {
+        token_id     = "${scope_key}.${pair[0]}"
+        scope_key    = scope_key
+        token_key    = pair[0]
+        token        = scope.tokens[pair[0]]
+        password_num = pair[1]
+      } if !contains(keys(scope.tokens[pair[0]]), "secret")
+    }
+  ]...)
 
   name = coalesce(
-    each.value.value.token.secret_name, "${var.naming.key_vault_secret}-${each.value.value.token_key}-${each.value.password_num}"
+    each.value.token.secret_name, "${each.value.scope_key}-${each.value.token_key}-${each.value.password_num}"
   )
 
-  key_vault_id = var.registry.vault
-  value        = coalesce(each.value.value.token.value_wo_version, each.value.password_value)
+  value = coalesce(
+    each.value.token.value_wo_version,
+    each.value.password_num == "1"
+    ? azurerm_container_registry_token_password.this[each.value.token_id].password1[0].value
+    : azurerm_container_registry_token_password.this[each.value.token_id].password2[0].value
+  )
 
-  expiration_date = each.value.value.token.expiry
-  not_before_date = each.value.value.token.not_before_date
-  content_type    = each.value.value.token.content_type
+  key_vault_id    = var.registry.vault
+  expiration_date = each.value.token.expiry
+  not_before_date = each.value.token.not_before_date
+  content_type    = each.value.token.content_type
 
   tags = coalesce(
     var.registry.tags, var.tags
@@ -203,21 +187,22 @@ resource "azurerm_key_vault_secret" "secret" {
 }
 
 # agent pools
-resource "azurerm_container_registry_agent_pool" "pools" {
+resource "azurerm_container_registry_agent_pool" "this" {
   for_each = var.registry.agentpools
 
   resource_group_name = coalesce(
-    lookup(
-      var.registry, "resource_group_name", null
-    ), var.resource_group_name
+    var.registry.resource_group_name, var.resource_group_name
+  )
+
+  location = coalesce(
+    var.registry.location, var.location
   )
 
   name = coalesce(
     each.value.name, each.key
   )
 
-  container_registry_name = azurerm_container_registry.acr.name
-  location                = coalesce(lookup(var.registry, "location", null), var.location)
+  container_registry_name = azurerm_container_registry.this.name
 
   instance_count            = each.value.instances
   tier                      = each.value.tier
@@ -229,26 +214,24 @@ resource "azurerm_container_registry_agent_pool" "pools" {
 }
 
 # webhooks
-resource "azurerm_container_registry_webhook" "webhook" {
+resource "azurerm_container_registry_webhook" "this" {
   for_each = var.registry.webhooks
 
   resource_group_name = coalesce(
-    lookup(
-      var.registry, "resource_group_name", null
-    ), var.resource_group_name
+    var.registry.resource_group_name, var.resource_group_name
   )
 
   location = coalesce(
-    lookup(
-      var.registry, "location", null
-    ), var.location
+    var.registry.location, var.location
   )
 
   name = coalesce(
-    each.value.name, join("", [var.naming.container_registry_webhook, each.key])
+    each.value.name, substr(
+      "webhook${replace(each.key, "/[^0-9A-Za-z]/", "")}", 0, 50
+    )
   )
 
-  registry_name  = azurerm_container_registry.acr.name
+  registry_name  = azurerm_container_registry.this.name
   service_uri    = each.value.service_uri
   status         = each.value.status
   scope          = each.value.scope
@@ -261,26 +244,29 @@ resource "azurerm_container_registry_webhook" "webhook" {
 }
 
 # caching rules
-resource "azurerm_container_registry_cache_rule" "cache" {
+resource "azurerm_container_registry_cache_rule" "this" {
   for_each = var.registry.cache_rules
 
   name = coalesce(
     each.value.name, each.key
   )
 
-  container_registry_id = azurerm_container_registry.acr.id
+  container_registry_id = azurerm_container_registry.this.id
   target_repo           = each.value.target_repo
   source_repo           = each.value.source_repo
   credential_set_id     = each.value.credential_set_id
 }
 
 # connected registries
-resource "azurerm_container_connected_registry" "connected" {
+resource "azurerm_container_connected_registry" "this" {
   for_each = var.registry.connected_registries
 
-  name                  = coalesce(each.value.name, each.key)
-  container_registry_id = azurerm_container_registry.acr.id
-  sync_token_id         = each.value.sync_token_id != null ? each.value.sync_token_id : azurerm_container_registry_token.token[each.value.sync_token].id
+  name = coalesce(
+    each.value.name, each.key
+  )
+
+  container_registry_id = azurerm_container_registry.this.id
+  sync_token_id         = each.value.sync_token_id != null ? each.value.sync_token_id : azurerm_container_registry_token.this[each.value.sync_token].id
   audit_log_enabled     = each.value.audit_log_enabled
   client_token_ids      = each.value.client_token_ids
   log_level             = each.value.log_level
@@ -301,7 +287,7 @@ resource "azurerm_container_connected_registry" "connected" {
     }
   }
 
-  depends_on = [azurerm_container_registry_token_password.password]
+  depends_on = [azurerm_container_registry_token_password.this]
 }
 
 # role assignments
@@ -309,17 +295,21 @@ resource "azurerm_role_assignment" "encryption" {
   for_each = var.registry.encryption != null ? { "encryption" = var.registry.encryption } : {}
 
   scope                = each.value.key_vault_scope
-  role_definition_name = "Key Vault Crypto Officer"
+  role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
 }
 
 resource "azurerm_role_assignment" "admins" {
   for_each = {
     for k, v in var.registry.scope_maps : k => v
-    if try(coalesce(v.key_vault_id, var.registry.vault), null) != null
+    if anytrue([
+      for tk, t in v.tokens : nonsensitive(t.secret == null) && !contains(
+        [for cr in values(var.registry.connected_registries) : cr.sync_token], "${k}.${tk}"
+      )
+    ])
   }
 
   scope                = coalesce(each.value.key_vault_id, var.registry.vault)
-  role_definition_name = "Key Vault Secrets Officer"
+  role_definition_name = each.value.role_definition_name
   principal_id         = data.azurerm_client_config.current.object_id
 }
