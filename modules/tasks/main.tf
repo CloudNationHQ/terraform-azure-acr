@@ -2,15 +2,20 @@
 resource "azurerm_container_registry_task" "this" {
   for_each = var.tasks
 
-  name                  = coalesce(each.value.task_name, each.key)
+  name = coalesce(
+    each.value.task_name, each.key
+  )
+
+  tags = coalesce(
+    each.value.tags, var.tags
+  )
+
   container_registry_id = each.value.container_registry_id
   agent_pool_name       = each.value.agent_pool_name
   enabled               = each.value.enabled
   is_system_task        = each.value.is_system_task
   log_template          = each.value.log_template
   timeout_in_seconds    = each.value.timeout_in_seconds
-
-  tags = coalesce(each.value.tags, var.tags)
 
   dynamic "agent_setting" {
     for_each = each.value.agent_setting != null ? { "this" = each.value.agent_setting } : {}

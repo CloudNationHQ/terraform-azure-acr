@@ -39,8 +39,8 @@ map(object({
     task_name             = optional(string)
     container_registry_id = string
     agent_pool_name       = optional(string)
-    enabled               = optional(bool, true)
-    is_system_task        = optional(bool, false)
+    enabled               = optional(bool)
+    is_system_task        = optional(bool)
     log_template          = optional(string)
     schedule_run_now      = optional(bool, false)
     timeout_in_seconds    = optional(number)
@@ -83,7 +83,7 @@ map(object({
     base_image_trigger = optional(object({
       name                        = string
       type                        = string
-      enabled                     = optional(bool, true)
+      enabled                     = optional(bool)
       update_trigger_endpoint     = optional(string)
       update_trigger_payload_type = optional(string)
     }))
@@ -92,7 +92,7 @@ map(object({
       repository_url = string
       events         = list(string)
       source_type    = string
-      enabled        = optional(bool, true)
+      enabled        = optional(bool)
       branch         = optional(string)
       authentication = optional(object({
         token             = string
@@ -105,7 +105,7 @@ map(object({
     timer_triggers = optional(map(object({
       name     = string
       schedule = string
-      enabled  = optional(bool, true)
+      enabled  = optional(bool)
     })), {})
     identity = optional(object({
       type         = string

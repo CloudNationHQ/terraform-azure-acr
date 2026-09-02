@@ -1,21 +1,24 @@
 variable "registry" {
   description = "contains container registry related configuration"
   type = object({
-    name                          = string
-    resource_group_name           = optional(string)
-    location                      = optional(string)
-    sku                           = string
-    admin_enabled                 = optional(bool)
-    quarantine_policy_enabled     = optional(bool)
-    network_rule_bypass_option    = optional(string)
-    public_network_access_enabled = optional(bool)
-    zone_redundancy_enabled       = optional(bool)
-    anonymous_pull_enabled        = optional(bool)
-    export_policy_enabled         = optional(bool)
-    data_endpoint_enabled         = optional(bool)
-    retention_policy_in_days      = optional(number)
-    tags                          = optional(map(string))
-    vault                         = optional(string)
+    name                                         = string
+    resource_group_name                          = optional(string)
+    location                                     = optional(string)
+    sku                                          = string
+    admin_enabled                                = optional(bool)
+    quarantine_policy_enabled                    = optional(bool)
+    network_rule_bypass_option                   = optional(string)
+    public_network_access_enabled                = optional(bool)
+    zone_redundancy_enabled                      = optional(bool)
+    anonymous_pull_enabled                       = optional(bool)
+    export_policy_enabled                        = optional(bool)
+    data_endpoint_enabled                        = optional(bool)
+    retention_policy_in_days                     = optional(number)
+    azuread_authentication_as_arm_policy_enabled = optional(bool)
+    network_rule_bypass_for_tasks_enabled        = optional(bool)
+    role_assignment_mode                         = optional(string)
+    tags                                         = optional(map(string))
+    vault                                        = optional(string)
     identity = optional(object({
       type         = string
       identity_ids = optional(list(string))
@@ -27,10 +30,11 @@ variable "registry" {
       tags                            = optional(map(string))
     })), {})
     encryption = optional(object({
-      key_vault_key_id   = string
-      identity_client_id = string
-      key_vault_scope    = string
-      principal_id       = string
+      key_vault_key_id     = string
+      identity_client_id   = string
+      key_vault_scope      = string
+      principal_id         = string
+      role_definition_name = optional(string, "Key Vault Crypto Officer")
     }))
     network_rule_set = optional(object({
       default_action = optional(string)
@@ -40,10 +44,11 @@ variable "registry" {
       })), {})
     }))
     scope_maps = optional(map(object({
-      name         = optional(string)
-      actions      = list(string)
-      description  = optional(string)
-      key_vault_id = optional(string)
+      name                 = optional(string)
+      actions              = list(string)
+      description          = optional(string)
+      key_vault_id         = optional(string)
+      role_definition_name = optional(string, "Key Vault Secrets Officer")
       tokens = optional(map(object({
         name             = optional(string)
         secret_name      = optional(string)

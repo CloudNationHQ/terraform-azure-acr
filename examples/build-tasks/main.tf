@@ -44,13 +44,13 @@ module "tasks" {
 
       encoded_step = {
         task_content = base64encode(<<-EOF
-          version: v1.1.0
-          steps:
-            - cmd: bash:latest bash -c "echo 'FROM nginx:alpine' > Dockerfile"
-            - build: -t $Registry/nginx:latest .
-            - push:
-              - $Registry/nginx:latest
-          EOF
+        version: v1.1.0
+        steps:
+        - cmd: bash:latest bash -c "echo 'FROM nginx:alpine' > Dockerfile"
+        - build: -t $Registry/nginx:latest .
+        - push:
+        - $Registry/nginx:latest
+        EOF
         )
       }
     }
