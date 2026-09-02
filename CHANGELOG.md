@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.3.0...v6.0.0) (2026-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* bumps the azurerm provider to ~> 5.0, renames resource addresses (state migration handled by the included moved blocks), removes the `naming` variable, and drops/renames several inputs.
+
+### Features
+
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#115](https://github.com/CloudNationHQ/terraform-azure-acr/issues/115)) ([1390bba](https://github.com/CloudNationHQ/terraform-azure-acr/commit/1390bba61e43e536e8004eca45e033a53eb1f222))
+* **deps:** bump golang.org/x/crypto from 0.45.0 to 0.52.0 in /tests ([#117](https://github.com/CloudNationHQ/terraform-azure-acr/issues/117)) ([421b5cb](https://github.com/CloudNationHQ/terraform-azure-acr/commit/421b5cbf00e6db358a45b527136bdedfd720e22f))
+* upgrade to azurerm v5 provider ([#119](https://github.com/CloudNationHQ/terraform-azure-acr/issues/119)) ([3908da8](https://github.com/CloudNationHQ/terraform-azure-acr/commit/3908da884423a655f754c2cda2da8d0b59182e14))
+
 ## [5.3.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.2.0...v5.3.0) (2026-03-25)
 
 
