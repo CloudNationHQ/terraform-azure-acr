@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v6.0.0...v6.1.0) (2026-10-20)
+
+
+### Features
+
+* **deps:** bump github.com/klauspost/compress in /tests ([#120](https://github.com/CloudNationHQ/terraform-azure-acr/issues/120)) ([b55ad4a](https://github.com/CloudNationHQ/terraform-azure-acr/commit/b55ad4aac7a1199ddefc737696b4435ce5308fc7))
+
 ## [6.0.0](https://github.com/CloudNationHQ/terraform-azure-acr/compare/v5.3.0...v6.0.0) (2026-09-02)
 
 
