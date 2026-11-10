@@ -70,7 +70,6 @@ variable "registry" {
         content_type     = optional(string)
         enabled          = optional(bool)
         value_wo_version = optional(string)
-        value_wo         = optional(string)
         secret = optional(object({
           password1 = string
           password2 = string
