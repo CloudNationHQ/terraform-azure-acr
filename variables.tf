@@ -35,6 +35,12 @@ variable "registry" {
       key_vault_scope      = string
       principal_id         = string
       role_definition_name = optional(string, "Key Vault Crypto Officer")
+
+      skip_service_principal_aad_check = optional(bool)
+      condition                        = optional(string)
+      condition_version                = optional(string)
+      description                      = optional(string)
+      principal_type                   = optional(string)
     }))
     network_rule_set = optional(object({
       default_action = optional(string)
@@ -49,6 +55,13 @@ variable "registry" {
       description          = optional(string)
       key_vault_id         = optional(string)
       role_definition_name = optional(string, "Key Vault Secrets Officer")
+
+      skip_service_principal_aad_check = optional(bool)
+      condition                        = optional(string)
+      condition_version                = optional(string)
+      role_assignment_description      = optional(string)
+      principal_type                   = optional(string)
+
       tokens = optional(map(object({
         name             = optional(string)
         secret_name      = optional(string)
