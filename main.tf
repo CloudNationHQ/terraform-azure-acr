@@ -148,6 +148,15 @@ resource "azurerm_container_registry_token_password" "this" {
   }
 }
 
+locals {
+  token_password = {
+    for k, v in azurerm_container_registry_token_password.this : k => {
+      "1" = v.password1[0].value
+      "2" = v.password2[0].value
+    }
+  }
+}
+
 # secrets generated from module
 resource "azurerm_key_vault_secret" "this" {
   for_each = merge([
@@ -167,12 +176,13 @@ resource "azurerm_key_vault_secret" "this" {
     each.value.token.secret_name, "${each.value.scope_key}-${each.value.token_key}-${each.value.password_num}"
   )
 
-  value = coalesce(
-    each.value.token.value_wo_version,
-    each.value.password_num == "1"
-    ? azurerm_container_registry_token_password.this[each.value.token_id].password1[0].value
-    : azurerm_container_registry_token_password.this[each.value.token_id].password2[0].value
-  )
+  # value and value_wo are mutually exclusive: setting value_wo_version on the
+  # token switches the secret to write-only mode (requires terraform >= 1.11)
+  value = each.value.token.value_wo_version == null ? local.token_password[each.value.token_id][each.value.password_num] : null
+
+  value_wo = each.value.token.value_wo_version != null ? local.token_password[each.value.token_id][each.value.password_num] : null
+
+  value_wo_version = each.value.token.value_wo_version
 
   key_vault_id    = var.registry.vault
   expiration_date = each.value.token.expiry
@@ -297,6 +307,12 @@ resource "azurerm_role_assignment" "encryption" {
   scope                = each.value.key_vault_scope
   role_definition_name = each.value.role_definition_name
   principal_id         = each.value.principal_id
+
+  skip_service_principal_aad_check = each.value.skip_service_principal_aad_check
+  condition                        = each.value.condition
+  condition_version                = each.value.condition_version
+  description                      = each.value.description
+  principal_type                   = each.value.principal_type
 }
 
 resource "azurerm_role_assignment" "admins" {
@@ -312,4 +328,10 @@ resource "azurerm_role_assignment" "admins" {
   scope                = coalesce(each.value.key_vault_id, var.registry.vault)
   role_definition_name = each.value.role_definition_name
   principal_id         = data.azurerm_client_config.current.object_id
+
+  skip_service_principal_aad_check = each.value.skip_service_principal_aad_check
+  condition                        = each.value.condition
+  condition_version                = each.value.condition_version
+  description                      = each.value.role_assignment_description
+  principal_type                   = each.value.principal_type
 }
